@@ -1,3 +1,5 @@
+/* 2017 (C) Software source, Copyright Owner Shirley Chung. joniesg@gmail.com' */
+
 #include "stdafx.h"
 #include "SettingDialog.h"
 
@@ -22,7 +24,7 @@ BYTE* CDlgItem::WriteToBuffer(BYTE* pBuffer)
 	/* control type */
 	*(WORD*)pBuffer = m_controlType;
 	pBuffer += sizeof(WORD);
-	/* ¼ÐÃD/title */
+	/* Â¼ÃÃƒD/title */
 	pBuffer += _StringToUNICODE(m_strCaption, pBuffer) * sizeof(WCHAR);
 	/* bytes in data for control */
 	*(WORD*)pBuffer = 0;
@@ -140,7 +142,7 @@ BYTE* CSettingDialog::_InitDlgTemplate(BYTE* pBuffer, CRect& rt, const CString& 
 	/* windows class */
 	*(WORD*)pBuffer = 0;
 	pBuffer += sizeof(WORD);
-	/* ¼ÐÃD  */
+	/* Â¼ÃÃƒD  */
 	pBuffer += _StringToUNICODE(strCaption, pBuffer) * sizeof(WCHAR);
 	/* font-size */
 	*(WORD*)pBuffer = fontsize;
