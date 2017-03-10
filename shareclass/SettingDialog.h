@@ -1,3 +1,5 @@
+/* 2017 (C) Software source, Copyright Owner Shirley Chung. joniesg@gmail.com' */
+
 #pragma once
 #include "afxwin.h"
 #include "afxtempl.h"
