@@ -1,12 +1,14 @@
 #ifndef _console_2017_03_cmd_input_12454
 #define _console_2017_03_cmd_input_12454
 
-#include <iostream.h>
+#include <iostream>
 #include <list>
+
+using namespace std;
 
 class Console
 {
-	std::list<string> _cmdHistory;
+	list<string> _cmdHistory;
 public:
 	Console();
 	virtual ~Console();
