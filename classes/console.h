@@ -8,12 +8,17 @@ using namespace std;
 
 class Console
 {
-	list<string> _cmdHistory;
+	list<string> 	_cmdHistory;
+	string		_prompt, _cmd;
+
+	bool IsExitCmd(string);
+
 public:
 	Console();
 	virtual ~Console();
 
 	void Prompt();
+	void SetPrompt(string str){ if(str.size()) _prompt = str; }
 };
 
 #endif

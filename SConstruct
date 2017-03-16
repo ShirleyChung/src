@@ -1,4 +1,4 @@
-env = Environment()
+env = Environment( CPPPATH = ['classes'])
 
-system = SConscript( dirs='system' )
+system = SConscript( dirs='system', exports = 'env' )
 

@@ -1,1 +1,13 @@
-system = Program(target = 'bin/system', source = 'system.cpp')
+Import( 'env' )
+
+envSystem = env.Clone()
+
+envSystem.VariantDir( 'bin', '.', duplicate = 0 )
+
+system = envSystem.Program(
+	target = 'system', 
+	source = [Glob('*.cpp'), Glob('../classes/*.cpp')],
+	LIBPATH = '#out')
+
+envSystem.Install( '#out', system )
+envSystem.Alias( 'install', '#out' )
