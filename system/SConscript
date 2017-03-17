@@ -1,12 +1,12 @@
 Import( 'env' )
 
-envSystem = env.Clone()
+envSystem = env.Clone(LINKFLAGS = '-ldl')
 
-envSystem.VariantDir( 'bin', '.', duplicate = 0 )
+envSystem.VariantDir( 'build', ['src'], duplicate = 0 )
 
 system = envSystem.Program(
-	target = 'system', 
-	source = [Glob('*.cpp'), Glob('../classes/*.cpp')],
+	target = 'build/system', 
+	source = ['build/system.cpp', Glob('../classes/*.cpp')],
 	LIBPATH = '#out')
 
 envSystem.Install( '#out', system )

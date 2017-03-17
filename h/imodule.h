@@ -1,17 +1,14 @@
-#ifndef _module_interface_cpp
-#define _module_interface_cpp
+#ifndef _module_interface_define_2017_03_shirley
+#define _module_interface_define_2017_03_shirley
 
-#include <list>
 #include <string>
 
 using namespace std;
 
 class IModule
 {
-	vector<string> _apiList;
 public:
-	const vector<string>& GetAPIList() = 0;
-
+	virtual string GetModuleDesc() = 0;
 };
 
 #endif

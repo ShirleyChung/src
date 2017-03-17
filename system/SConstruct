@@ -1,3 +1,0 @@
-env = Environment( CPPPATH = ['../classes'] )
-
-system = SConscript( dirs='.', exports = ['env'] )

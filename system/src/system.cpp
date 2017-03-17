@@ -1,4 +1,5 @@
-#include "../classes/console.h"
+#include "../../classes/console.h"
+#include "../../classes/loader.h"
 
 void test(const vector<string>& args)
 {
@@ -16,6 +17,12 @@ int main(int argc, char* argv[])
 
 	Console con;
 	con.SetCmdCallback(test);
+
+	Loader ldr("./libMan.so");
+
+	IModule* mod = ldr.GetModule();
+	if( mod )
+		cout<<mod->GetModuleDesc()<<"\n";
 
 	con.Prompt();
 
