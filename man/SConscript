@@ -1,12 +1,12 @@
 Import( 'env' )
 
-envMan = env.Clone()
+envman = env.Clone()
 
-#envMan = VariantDir( 'build', ['.'], duplicate = 0 )
+#envman = VariantDir( 'build', ['.'], duplicate = 0 )
 
-libMan = envMan.SharedLibrary( target = 'build/libMan', 
+libman = envman.SharedLibrary( target = 'build/libman', 
 	source = ['man.cpp'], 
 	LIBPATH = '#out')
 
-envMan.Install( '#out', libMan )
-envMan.Alias( 'install', '#out' )
+envman.Install( '#out', libman )
+envman.Alias( 'install', '#out' )
