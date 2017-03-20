@@ -15,7 +15,7 @@ Man::Man()
 
 string Man::EnterCommandString(const vector<string>& args)
 {
-	string& cmd = args[0];
+	const string& cmd = args[0];
 
 	if (cmd == "help")
 	{

@@ -9,7 +9,7 @@ ICmdModule* mod;
 void input(const vector<string>& args)
 {
 	if (args.size())
-		mod->EnterCommandString();
+		mod->EnterCommandString(args);
 }
 
 int main(int argc, char* argv[])
