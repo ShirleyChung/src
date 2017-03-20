@@ -1,4 +1,5 @@
 #include "configfile.h"
+#include <iostream>
 
 ConfigFile::ConfigFile()
 {}
@@ -17,9 +18,13 @@ bool ConfigFile::Load(const string& fn)
 {
 	if (!fn.size()) return false;
 
+	cout<<"loading "<<fn<<" ..\n";
+
 	_fn = fn;
 	ifstream ifs(fn.c_str());
 	if(!ifs) return false;
+	else cout<<"ifs ok\n";
+	
 
 	_cfg_map.clear();
 
@@ -44,6 +49,8 @@ bool ConfigFile::Write(const string& key, const string& val)
 bool ConfigFile::Write(const string& fn, const string& key, const string& val)
 {
 	if (!fn.size()) return false;
+
+	cout<<"Writing "<<fn<<" ..\n";
 
 	ofstream ofs(fn.c_str());
 	if (!ofs) return false;
