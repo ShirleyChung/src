@@ -1,15 +1,15 @@
 #include "../../classes/console.h"
 #include "../../classes/loader.h"
 #include "../../classes/configfile.h"
+#include "../../h/icmdmodule.h"
 
-void test(const vector<string>& args)
+
+ICmdModule* mod;
+
+void input(const vector<string>& args)
 {
-	vector<string>::const_iterator i = args.begin();
-	while( i != args.end() )
-	{
-		cout<< *i << '\n';
-		i++;
-	}
+	if (args.size())
+		mod->EnterCommandString();
 }
 
 int main(int argc, char* argv[])
@@ -19,13 +19,14 @@ int main(int argc, char* argv[])
 	ConfigFile conf("./conf/loadmodule.cfg");
 
 	Console con;
-	con.SetCmdCallback(test);
 
 	Loader ldr("./libman.so");
 
-	IModule* mod = ldr.GetModule();
+	mod = (ICmdModule*)ldr.GetModule();
 	if( mod )
 		cout<<mod->GetModuleDesc()<<"\n";
+
+	con.SetCmdCallback(input);
 
 	con.Prompt();
 
