@@ -1,5 +1,4 @@
 /* 2017 (C) Software source, Copyright Owner Shirley Chung. joniesg@gmail.com' */
-
 #pragma once
 #include "afxwin.h"
 #include "afxtempl.h"
@@ -14,11 +13,14 @@ size_t _StringToUNICODE(const CString&, BYTE* buffer);
 */
 struct CDlgItem
 {
-	enum	controltype {BUTTON = 0x0080, EDITCONTROL, STATICTEXT};
+	enum	controltype { wndCLASS = -1, BUTTON = 0x0080, EDITCONTROL, STATICTEXT, LISTBOX, SCROLLBAR, COMBOX};
 
 	DLGITEMTEMPLATE m_dlgItem;
 	CString m_strCaption;
 	controltype m_controlType;
+	CString m_wndClass;
+	size_t m_szData;
+	BYTE* m_pData;
 
 	size_t GetSize()
 	{
@@ -26,6 +28,9 @@ struct CDlgItem
 		return (sz + 3) & ~3; //DWORD aligned.
 	}
 	BYTE* WriteToBuffer(BYTE* pBuffer);
+
+	CDlgItem():m_szData(0), m_pData(NULL){};
+	~CDlgItem(){ if(m_szData) delete[] m_pData; }
 };
 
 /* 
@@ -51,9 +56,11 @@ protected:
 public:
 	void AddCheckBox(WORD id, CString caption, CRect rt);
 	void AddButton(WORD id, CString caption, CRect rt);
+	void AddListCtl(WORD id, CRect rt, DWORD style = WS_CHILD | WS_VISIBLE | LVS_REPORT | WS_BORDER, DWORD exstyle = 0);
 
 	void AddControl(WORD id, CDlgItem::controltype, DWORD wndStyle, DWORD exStyle, CString caption, short x, short y, short cx, short cy);
 	void AddControl(WORD id, CDlgItem::controltype, DWORD wndStyle, DWORD exStyle, CString caption, CRect rt);
+	void AddControl(WORD id, CString wndClass, DWORD wndStyle, DWORD exStyle, CString caption, CRect rt, size_t dataLen = 0, BYTE* pData = NULL);
 	void DoModalDialog(CRect rt, const CString& caption, CWnd* parent = NULL, const CString& fontname = "Arial", short fontsize = 9, DWORD style = WS_CAPTION | WS_VISIBLE | WS_DLGFRAME | WS_POPUP | WS_SYSMENU | DS_MODALFRAME | DS_SETFONT , DWORD exStyle = 0);
 
 	CSettingDialog();

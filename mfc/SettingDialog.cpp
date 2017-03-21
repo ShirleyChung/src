@@ -1,5 +1,4 @@
 /* 2017 (C) Software source, Copyright Owner Shirley Chung. joniesg@gmail.com' */
-
 #include "stdafx.h"
 #include "SettingDialog.h"
 
@@ -18,14 +17,22 @@ BYTE* CDlgItem::WriteToBuffer(BYTE* pBuffer)
 	/*  DLGITEMTEMPLATE */
 	memcpy(pBuffer, &m_dlgItem, sizeof(DLGITEMTEMPLATE));
 	pBuffer += sizeof(DLGITEMTEMPLATE);
-	/*  indicating atom value */
-	*(WORD*)pBuffer = 0xFFFF;
-	pBuffer += sizeof(WORD);
+
 	/* control type */
-	*(WORD*)pBuffer = m_controlType;
-	pBuffer += sizeof(WORD);
-	/* ¼ÐÃD/title */
+	if (m_controlType == wndCLASS || !m_wndClass.IsEmpty())
+		pBuffer += _StringToUNICODE(m_wndClass, pBuffer) * sizeof(WCHAR);
+	else
+	{
+		/*  indicating atom value */
+		*(WORD*)pBuffer = 0xFFFF;
+		pBuffer += sizeof(WORD);
+		*(WORD*)pBuffer = m_controlType;
+		pBuffer += sizeof(WORD);
+	}
+
+	/* 標題/title */
 	pBuffer += _StringToUNICODE(m_strCaption, pBuffer) * sizeof(WCHAR);
+
 	/* bytes in data for control */
 	*(WORD*)pBuffer = 0;
 	pBuffer += sizeof(WORD);
@@ -73,6 +80,10 @@ void CSettingDialog::AddButton(WORD id, CString caption, CRect rt)
 	AddControl(id, CDlgItem::BUTTON, WS_CHILD | WS_VISIBLE , 0, caption, rt);
 }
 
+void CSettingDialog::AddListCtl(WORD id, CRect rt, DWORD style, DWORD exstyle)
+{
+	AddControl(id, "SysListView32", style, exstyle, "", rt);
+}
 
 void CSettingDialog::AddControl(WORD id, CDlgItem::controltype type, DWORD wndStyle, DWORD exStyle, CString caption, short x, short y, short cx, short cy)
 {
@@ -86,6 +97,28 @@ void CSettingDialog::AddControl(WORD id, CDlgItem::controltype type, DWORD wndSt
 	dlgitem.m_dlgItem.dwExtendedStyle = exStyle;
 	dlgitem.m_strCaption = caption;
 	dlgitem.m_controlType = type;
+	m_dlgItemList.AddTail(dlgitem);
+}
+
+void CSettingDialog::AddControl(WORD id, CString wndClass, DWORD wndStyle, DWORD exStyle, CString caption, CRect rt, size_t dataLen, BYTE* pData)
+{
+	CDlgItem dlgitem;
+	dlgitem.m_dlgItem.x = (short)rt.left;
+	dlgitem.m_dlgItem.y = (short)rt.top;
+	dlgitem.m_dlgItem.cx = (short)rt.Width();
+	dlgitem.m_dlgItem.cy = (short)rt.Height();
+	dlgitem.m_dlgItem.id = id;
+	dlgitem.m_dlgItem.style = wndStyle;
+	dlgitem.m_dlgItem.dwExtendedStyle = exStyle;
+	dlgitem.m_strCaption = caption;
+	dlgitem.m_controlType = CDlgItem::controltype::wndCLASS;
+	dlgitem.m_wndClass = wndClass;
+	dlgitem.m_szData = dataLen;
+	if (dataLen)
+	{
+		dlgitem.m_pData = new BYTE[dataLen];
+		memcpy(dlgitem.m_pData, pData, dataLen);
+	}
 	m_dlgItemList.AddTail(dlgitem);
 }
 
@@ -142,7 +175,7 @@ BYTE* CSettingDialog::_InitDlgTemplate(BYTE* pBuffer, CRect& rt, const CString& 
 	/* windows class */
 	*(WORD*)pBuffer = 0;
 	pBuffer += sizeof(WORD);
-	/* ¼ÐÃD  */
+	/* 標題  */
 	pBuffer += _StringToUNICODE(strCaption, pBuffer) * sizeof(WCHAR);
 	/* font-size */
 	*(WORD*)pBuffer = fontsize;
