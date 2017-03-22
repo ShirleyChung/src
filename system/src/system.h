@@ -8,20 +8,26 @@
 
 class System:public ICmdModule
 {
-	typedef void(System::*funcptr)(void);
+	typedef void(System::*funcptr)(STRARR&);
 	typedef map<string, funcptr> FUNCMAP;
 	
 	Loader _ldr;
 	Console _con;
 	ConfigFile _conf;
 	
-	void ListModule();
-	
+	void ListModule(STRARR&);
+
+	void LoadModule(STRARR&);
+
+	bool EnterCommandToModule(STRARR&);
+
+	void ShowSupportedCmds();
+
 	FUNCMAP _func_map;
 public:
 	System();
 	virtual ~System();
-	virtual void EnterCommand(STRARR cmd);
+	virtual void EnterCommand(STRARR& cmd);
 	virtual string GetModuleDesc(){ return "system mediator.\n"; }
 	
 	void Run();
