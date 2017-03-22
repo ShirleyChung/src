@@ -13,7 +13,7 @@ Man::Man()
 	_cmdMap["help"] = NULL;
 }
 
-string Man::EnterCommandString(const vector<string>& args)
+void Man::EnterCommand(const vector<string>& args)
 {
 	const string& cmd = args[0];
 
@@ -28,7 +28,6 @@ string Man::EnterCommandString(const vector<string>& args)
 		cout<<"analyzing '"<<cmd<<"' ...\n";
 		cout<<"Sorry, I dont know what '"<<cmd<<"' means.\n";
 	}
-	return "command execute ok.\n";
 }
 
 list<string> Man::GetSupportedCommands()

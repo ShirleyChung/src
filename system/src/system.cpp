@@ -1,36 +1,56 @@
-#include "../../classes/console.h"
-#include "../../classes/loader.h"
-#include "../../classes/configfile.h"
-#include "../../h/icmdmodule.h"
+#include "system.h"
 
+System sys;
 
-ICmdModule* mod;
-
-void input(const vector<string>& args)
+void CmdHandler(STRARR cmd)
 {
-	if (args.size())
-		mod->EnterCommandString(args);
+	sys.EnterCommand(cmd);
+}
+
+System::System()
+:_conf("./conf/loadmodule.cfg")
+{
+	_ldr.Load(_conf.GetConfig());
+	
+	_func_map["listmod"] = &System::ListModule;
+	
+	_con.AddCommandHandler(CmdHandler);
+}
+
+System::~System()
+{
+
+}
+
+void System::EnterCommand(STRARR cmd)
+{
+	if (cmd.size())
+	{
+		FUNCMAP::iterator i = _func_map.find(cmd[0]);
+		if (i == _func_map.end())
+			cout<<" I don't know what '"<< cmd[0] <<"' means.\n";
+		else
+			(this->*(i->second))();
+	}
+}
+
+void System::Run()
+{
+	_con.Prompt();
+}
+
+void System::ListModule()
+{
+	vector<string> modlist = _ldr.GetModuleList();
+	for( vector<string>::iterator i = modlist.begin(); i != modlist.end(); ++i)
+		cout<<*i<<" = "<<_ldr.GetModule(*i)->GetModuleDesc()<<'\n';
 }
 
 int main(int argc, char* argv[])
 {
 	std::cout<<"system\n";
-
-	ConfigFile conf("./conf/loadmodule.cfg");
-
-	Console con;
-
-	Loader ldr("./libman.so");
-
-	mod = (ICmdModule*)ldr.GetModule();
-	if( mod )
-		cout<<mod->GetModuleDesc()<<"\n";
-
-	con.SetCmdCallback(input);
-
-	con.Prompt();
-
-	conf.Write("libman","./libman.so");
+	
+	sys.Run();
 
 	return 0;
 }

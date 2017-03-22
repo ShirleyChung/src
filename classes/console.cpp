@@ -3,7 +3,7 @@
 #define MAX_HISTORY 200
 
 Console::Console()
-:_prompt(">"), _cbCommand(0)
+:_prompt(">")
 {
 }
 
@@ -12,18 +12,20 @@ Console::~Console()
 
 void Console::Prompt()
 {
-	while( !_IsExitCmd(_cmd) ) 
-	{
+	do 
+	{		
+		for( CMDCBLIST::iterator i = _callbackList.begin(); i != _callbackList.end(); ++i )
+			(*i)(GetTokens(_cmd));
+		
+		_QueueCmd();
+		
 		_cmd.clear();
 		cout<<_prompt;
 		getline( cin, _cmd );
-
-		if (_cbCommand) (*_cbCommand)(GetTokens(_cmd));
-		
-		_QueueCmd();
 	}
+	while( !_IsExitCmd(_cmd) );
 
-	cout<< "Bye!";
+	cout<< "Bye!\n";
 }
 
 bool Console::_IsExitCmd(string cmd)
@@ -36,7 +38,6 @@ bool Console::_IsExitCmd(string cmd)
 
 void Console::_QueueCmd()
 {
-	
 	_cmdHistory.push_back(_cmd);
 	if (_cmdHistory.size() > MAX_HISTORY)
 		_cmdHistory.pop_front();

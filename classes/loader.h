@@ -3,27 +3,31 @@
 
 #include <string>
 #include <dlfcn.h>
-
-#include "../h/imodule.h"
-
 #include <iostream>
 
-typedef IModule* (*GetModuleProc)();
+#include "../h/common_def.h"
+#include "../h/imodule.h"
 
-using namespace std;
+typedef IModule* (*GetModuleProc)();
+typedef map<string, IModule*> MODMAP;
 
 class Loader
 {
 	void* _handle;
 	IModule* _module;
+	
+	MODMAP _mod_map;
 public:
 	Loader();
 	Loader(const string&);
 	virtual ~Loader();
 
-	bool Load(const string& file);
+	IModule* Load(const string& file);
+	void Load(const STRMAP& cfg);
 
-	IModule* GetModule(){ return _module; }
+	IModule* GetModule(const string& modname){ return _mod_map[modname]; }
+	
+	vector<string> GetModuleList();
 };
 
 #endif

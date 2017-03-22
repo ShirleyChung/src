@@ -4,7 +4,7 @@
 #include "imodule.h"
 #include <vector>
 
-typedef string (*OutputCallback)(string msg);
+typedef void (*OutputCallback)(string msg);
 
 class ICmdModule: public IModule
 {
@@ -13,10 +13,10 @@ protected:
 public:
 	ICmdModule(){ _interfaceType |= I_COMMAND; }
 
-	virtual bool SetOutputCallback(OutputCallback cb){ _outCb = cb; return true; }
-
+	virtual void SetOutputCallback(OutputCallback cb){ _outCb = cb; }
+	
 /* Needs implement  */
-	virtual string EnterCommandString(const std::vector<string>& cmd) = 0;
+	virtual void EnterCommand(const std::vector<string>& cmd) = 0;
 };
 
 #endif

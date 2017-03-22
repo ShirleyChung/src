@@ -18,12 +18,12 @@ bool ConfigFile::Load(const string& fn)
 {
 	if (!fn.size()) return false;
 
-	cout<<"loading "<<fn<<" ..\n";
+	cout<<"reading "<<fn<<" ..";
 
 	_fn = fn;
 	ifstream ifs(fn.c_str());
 	if(!ifs) return false;
-	else cout<<"ifs ok\n";
+	else cout<<" ok\n";
 	
 
 	_cfg_map.clear();
@@ -35,7 +35,7 @@ bool ConfigFile::Load(const string& fn)
 		ipos = 0;
 		ipos = line.find(SEP, ipos);
 		if (ipos != string::npos)
-			_cfg_map[ line.substr(0, ipos++) ] = line.substr(ipos);
+			_cfg_map[ line.substr(0, ipos) ] = line.substr(ipos+1);
 	}
 
 	return true;

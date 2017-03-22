@@ -2,11 +2,7 @@
 #define _configfile_for_ini_kind_config_reading2017_
 
 #include <fstream>
-#include <map>
-
-using namespace std;
-
-typedef map<string,string> STRMAP;
+#include "../h/common_def.h"
 
 class ConfigFile
 {
@@ -21,6 +17,8 @@ public:
 	bool Load(const string& fn);
 	bool Write(const string& key, const string& val);
 	bool Write(const string& fn, const string& key, const string& val);
+	
+	const STRMAP& GetConfig(){ return _cfg_map; }
 };
 
 #endif

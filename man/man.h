@@ -19,13 +19,13 @@ class Man: public ICmdModule
 	
 public:
 	Man();
-	virtual string GetModuleDesc(){ return "Manual module!"; }
+	virtual string GetModuleDesc(){ return "Manual module"; }
 
 	static IModule* GetModule(){
 		return (_inst)? _inst: new Man();
 	}
 
-	virtual string EnterCommandString(const vector<string>& cmd);
+	virtual void EnterCommand(const vector<string>& cmd);
 	
 	list<string> GetSupportedCommands();
 };
