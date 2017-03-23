@@ -9,6 +9,7 @@ void CmdHandler(STRARR& cmd)
 
 System::System()
 :_conf("./conf/loadmodule.cfg")
+,FuncDisp<System>(_ldr)
 {
 	_ldr.Load(_conf.GetConfig());
 	
@@ -21,45 +22,6 @@ System::System()
 System::~System()
 {
 
-}
-
-void System::EnterCommand(STRARR& cmd)
-{
-	if (cmd.size())
-	{
-		FUNCMAP::iterator i = _func_map.find(cmd[0]);
-		if (i == _func_map.end())
-		{
-			if (!EnterCommandToModule(cmd))
-				ShowSupportedCmds();
-		}
-		else
-			(this->*(i->second))( vector<string>( cmd.begin()+1, cmd.end() )  );
-	}
-}
-
-void System::ShowSupportedCmds()
-{
-	cout<<"Supported command:\n";
-	for( FUNCMAP::iterator i = _func_map.begin(); i != _func_map.end(); ++i )
-		cout<< '\t' << i->first << '\n';
-}
-
-
-bool System::EnterCommandToModule(STRARR& cmd)
-{
-	bool bHasCmd = false;
-	STRARR arr = _ldr.GetModuleList();
-	for( STRARR::const_iterator i = arr.begin(); i != arr.end(); ++i )
-	{
-		IModule* mod = _ldr.GetModule(*i);
-		if (mod->GetSupportedInterfaceType() & I_COMMAND)
-		{
-			bHasCmd = true;
-			((ICmdModule*)mod)->EnterCommand(cmd);
-		}
-	}
-	return bHasCmd;
 }
 
 void System::Run()

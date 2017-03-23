@@ -7,9 +7,9 @@
 
 using namespace std;
 
-typedef const vector<string>& STRARR;
+typedef const vector<string> STRARR;
 
-typedef void (*cmd_handler)(const vector<string>&);
+typedef void (*cmd_handler)(STRARR&);
 
 typedef list<cmd_handler> CMDCBLIST;
 
