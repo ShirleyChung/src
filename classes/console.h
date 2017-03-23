@@ -21,8 +21,6 @@ public:
 	void SetPrompt(string str){ if(str.size()) _prompt = str; }
 	
 	void AddCommandHandler(cmd_handler cb){ if(cb) _callbackList.push_back(cb); }
-
-	vector<string> GetTokens(string line);
 };
 
 #endif

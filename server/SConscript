@@ -1,0 +1,12 @@
+Import( 'env' )
+
+envserver = env.Clone()
+
+#envman = VariantDir( 'build', ['.'], duplicate = 0 )
+
+envserver = envserver.SharedLibrary( target = 'build/libserver', 
+	source = [Glob('server.cpp')], 
+	LIBPATH = 'build')
+
+envserver.Install( '#out', )
+envserver.Alias( 'install', '#out' )

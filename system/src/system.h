@@ -14,6 +14,8 @@ class System:public FuncDisp<System>
 	void ListModule(STRARR&);
 
 	void LoadModule(STRARR&);
+	
+	void SetModuleOutputCallback(OutputCallback);
 
 public:
 	System();

@@ -10,8 +10,10 @@ class ICmdModule: public IModule
 {
 protected:
 	OutputCallback _outCb;
+	void Invoke(const string& cmd){ if(_outCb) _outCb(cmd); }
+	
 public:
-	ICmdModule(){ _interfaceType |= I_COMMAND; }
+	ICmdModule():_outCb(NULL){ _interfaceType |= I_COMMAND; }
 
 	virtual void SetOutputCallback(OutputCallback cb){ _outCb = cb; }
 	

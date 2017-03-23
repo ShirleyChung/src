@@ -19,11 +19,13 @@ protected:
 	
 	virtual bool EnterCommandToModule(STRARR& cmd)
 	{
+		if (!_ldr) return false;
 		bool bHasCmd = false;
-		STRARR arr = _ldr.GetModuleList();
+
+		STRARR arr = _ldr->GetModuleList();
 		for( STRARR::const_iterator i = arr.begin(); i != arr.end(); ++i )
 		{
-			IModule* mod = _ldr.GetModule(*i);
+			IModule* mod = _ldr->GetModule(*i);
 			if (mod->GetSupportedInterfaceType() & I_COMMAND)
 			{
 				bHasCmd = true;
@@ -40,7 +42,7 @@ protected:
 			cout<< '\t' << i->first << '\n';
 	}
 	
-	Loader& _ldr;
+	Loader* _ldr;
 
 public:
 
@@ -55,11 +57,11 @@ public:
 					ShowSupportedCmds();
 			}
 			else
-				(((T*)this)->*(i->second))( vector<string>( cmd.begin()+1, cmd.end() )  );
+				if (i->second) (((T*)this)->*(i->second))( vector<string>( cmd.begin()+1, cmd.end() )  );
 		}
 	}
 	
-	FuncDisp(Loader& ldr):_ldr(ldr){}
+	FuncDisp(Loader* ldr = NULL):_ldr(ldr){}
 };
 
 #endif
