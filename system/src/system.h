@@ -9,11 +9,13 @@ class System:public FuncDisp<System>
 {
 	Loader _ldr;
 	Console _con;
-	ConfigFile _conf;
+	ConfigFile _modconf;
 	
 	void ListModule(STRARR&);
 
 	void LoadModule(STRARR&);
+
+	void SetPrompt(STRARR&);
 	
 	void SetModuleOutputCallback(OutputCallback);
 

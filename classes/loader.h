@@ -7,6 +7,7 @@
 
 #include "../h/common_def.h"
 #include "../h/imodule.h"
+#include "configfile.h"
 
 typedef IModule* (*GetModuleProc)();
 typedef map<string, IModule*> MODMAP;
@@ -17,6 +18,8 @@ class Loader
 	IModule* _module;
 	
 	MODMAP _mod_map;
+
+	ConfigFile _conf;
 public:
 	Loader();
 	Loader(const string&);
@@ -24,6 +27,7 @@ public:
 
 	IModule* Load(const string& file);
 	void Load(const STRMAP& cfg);
+	bool AddMod(const string& name, const string& path);
 
 	IModule* GetModule(const string& modname){ return _mod_map[modname]; }
 	

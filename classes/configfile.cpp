@@ -6,6 +6,7 @@ ConfigFile::ConfigFile()
 
 ConfigFile::~ConfigFile()
 {
+	Save();
 }
 
 ConfigFile::ConfigFile(const string& fn)
@@ -41,21 +42,13 @@ bool ConfigFile::Load(const string& fn)
 	return true;
 }
 
-bool ConfigFile::Write(const string& key, const string& val)
+void ConfigFile::Save(const string& fn)
 {
-	return Write(_fn, key, val);
-}
-
-bool ConfigFile::Write(const string& fn, const string& key, const string& val)
-{
-	if (!fn.size()) return false;
-
-	cout<<"Writing "<<fn<<" ..\n";
+	cout<<"Saving conf:"<<fn<<"..";
+	if (!fn.size()) return;
 
 	ofstream ofs(fn.c_str());
-	if (!ofs) return false;
-
-	ofs<<key<<SEP<<val<<'\n';
-
-	return true;
+	for(STRMAP::iterator i = _cfg_map.begin(); i != _cfg_map.end(); ++i)
+		ofs<<i->first<<SEP<<i->second<<'\n';
+	cout<<"OK\n";
 }

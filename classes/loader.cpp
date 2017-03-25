@@ -5,12 +5,15 @@ Loader::Loader()
 {}
 
 Loader::Loader(const string& fn)
+:_conf(fn)
 {
-	_module = Load(fn);
+	Load(_conf.GetConfig());
 }
 
 Loader::~Loader()
-{}
+{
+	_conf.Save();
+}
 
 IModule* Loader::Load(const string& fn)
 {
@@ -41,6 +44,16 @@ void Loader::Load(const STRMAP& cfg)
 		IModule* mod = Load(i->second);
 		if (mod)
 			_mod_map[i->first] = mod;
+	}
+}
+
+bool Loader::AddMod(const string& name, const string& path)
+{
+	IModule* mod = Load(path);
+	if (mod)
+	{
+		_mod_map[name] = mod;
+		_conf.Add(name, path);
 	}
 }
 

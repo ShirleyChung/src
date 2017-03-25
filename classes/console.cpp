@@ -3,13 +3,20 @@
 
 #define MAX_HISTORY 200
 
+#define ckey "prompt"
+
 Console::Console()
-:_prompt(">")
+:_conf("conf/console.cfg")
 {
+	_prompt = _conf.GetValue(ckey);
+	if (!_prompt.size()) _prompt = '>';
+	_conf.Add(ckey, _prompt);
 }
 
 Console::~Console()
-{}
+{
+	_conf.Save();
+}
 
 void Console::Prompt()
 {

@@ -3,12 +3,14 @@
 
 #include <iostream>
 #include "../h/common_def.h"
+#include "configfile.h"
 
 class Console
 {
 	CMDCBLIST _callbackList;
 	list<string> 	_cmdHistory;
 	string		_prompt, _cmd;
+	ConfigFile	_conf;
 
 	bool _IsExitCmd(string);
 	void _QueueCmd();

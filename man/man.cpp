@@ -12,8 +12,8 @@ extern "C" IModule* GetModule()
 Man::Man()
 {
 	_desc = "Manual module";
-	_func_map["help"] = &Man::Help;
-	_func_map["man"] = &Man::Manual;
+	AddFunc("help", &Man::Help);
+	AddFunc("man", &Man::Manual);
 	
 }
 

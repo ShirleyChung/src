@@ -14,11 +14,16 @@ public:
 	ConfigFile(const string& fn);
 	virtual ~ConfigFile();
 
-	bool Load(const string& fn);
-	bool Write(const string& key, const string& val);
-	bool Write(const string& fn, const string& key, const string& val);
+	string GetValue(const string& key){ return _cfg_map[key]; }
+	void Add(const string& key, const string& val){ _cfg_map[key] = val; }
 	
 	const STRMAP& GetConfig(){ return _cfg_map; }
+
+	bool Load(const string& fn);
+	bool Load(){ return Load(_fn); }
+
+	void Save(const string& fn);
+	void Save(){ Save(_fn); }
 };
 
 #endif

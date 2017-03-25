@@ -3,24 +3,26 @@
 
 System sys;
 
+/* 設定給console的輸入字串回呼函式 */
 void CmdHandler(STRARR& cmd)
 {
 	sys.EnterCommand(cmd);
 }
 
+/* 設定給module的輸入字串回呼函式 */
 void CallbackHanlder(string cmd)
 {
 	sys.EnterCommand(Tokenize(cmd));
 }
 
+/* System類別的constructor*/
 System::System()
-:_conf("./conf/loadmodule.cfg")
+:_ldr("./conf/loadmodule.cfg")
 ,FuncDisp<System>(&_ldr)
-{
-	_ldr.Load(_conf.GetConfig());
-	
-	_func_map["listmod"] = &System::ListModule;
-	_func_map["loadmod"] = &System::LoadModule;
+{	
+	AddFunc("listmod", &System::ListModule);
+	AddFunc("loadmod", &System::LoadModule);
+	AddFunc("setprompt", &System::SetPrompt);
 	
 	_con.AddCommandHandler(CmdHandler);
 
@@ -29,14 +31,15 @@ System::System()
 
 System::~System()
 {
-
 }
 
+/* Run: 執行console */
 void System::Run()
 {
 	_con.Prompt();
 }
 
+/* System指令功能:列出模組名稱及描述 */
 void System::ListModule(STRARR&)
 {
 	vector<string> modlist = _ldr.GetModuleList();
@@ -44,14 +47,24 @@ void System::ListModule(STRARR&)
 		cout<<*i<<" = "<<_ldr.GetModule(*i)->GetModuleDesc()<<'\n';
 }
 
+/* System指令功能:載入模組 */
 void System::LoadModule(STRARR& cmd)
 {
-	if (cmd.size())
-		_ldr.Load(cmd[0]);
+	if (cmd.size()>1)
+		_ldr.AddMod(cmd[0], cmd[1]);
 	else
-		cout<<"please specify module path\n";
+		cout<<"please specify module name and module path\n";
 }
 
+void System::SetPrompt(STRARR& cmd)
+{
+	if (cmd.size())
+		_con.SetPrompt(cmd[0]);
+	else
+		cout<<"please enter prompt string\n";
+}
+
+/* 設定所有ldr載入的模組的字串回呼函式 */
 void System::SetModuleOutputCallback(OutputCallback cb)
 {
 	vector<string> modlist = _ldr.GetModuleList();
@@ -63,6 +76,7 @@ void System::SetModuleOutputCallback(OutputCallback cb)
 	}
 }
 
+/* 程式進入點 */
 int main(int argc, char* argv[])
 {
 	std::cout<<"system\n";

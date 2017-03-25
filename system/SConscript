@@ -8,7 +8,7 @@ envSystem.VariantDir( '../classes/build', ['../classes'], duplicate = 0 )
 system = envSystem.Program(
 	target = 'build/system', 
 	source = ['build/system.cpp', Glob('../classes/build/*.cpp')],
-	LIBPATH = '#out')
+	LIBPATH = '#out', LIBS='pthread')
 
 envSystem.Install( '#out', system )
 envSystem.Alias( 'install', '#out' )
