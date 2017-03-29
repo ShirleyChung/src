@@ -10,6 +10,8 @@ class Talker: public FuncDisp<Talker>
 	static Talker* _inst;
 	thread _thd;
 	static void thread_proc(Talker*);
+
+	void Hello(STRARR&);
 public:
 	Talker();
 	virtual ~Talker();

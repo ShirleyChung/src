@@ -12,10 +12,16 @@ extern "C" IModule* GetModule()
 Talker::Talker()
 :_thd(thread_proc, this)
 {
+	AddFunc("hello", &Talker::Hello);
 }
 
 Talker::~Talker()
 {
+}
+
+void Talker::Hello(STRARR& cmd)
+{
+	cout<< "Hi!\n";
 }
 
 void Talker::thread_proc(Talker* pthis)
@@ -25,6 +31,5 @@ void Talker::thread_proc(Talker* pthis)
 		cout<<"hello!"<<rand()<<" \n";
 		int wait = 500 + rand()%5000;
 		this_thread::sleep_for(std::chrono::milliseconds(wait));
-		//this_thread::sleep_until(wait);
 	}
 }
