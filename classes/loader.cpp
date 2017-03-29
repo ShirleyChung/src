@@ -54,7 +54,10 @@ bool Loader::AddMod(const string& name, const string& path)
 	{
 		_mod_map[name] = mod;
 		_conf.Add(name, path);
+		return true;
 	}
+	else
+		return false;
 }
 
 vector<string> Loader::GetModuleList()
