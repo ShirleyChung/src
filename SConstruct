@@ -1,7 +1,7 @@
 env = Environment() 
 #Repository('h','classes')
 
-#sc = SConscript( dirs = 'classes', exports = 'env' )
+sc = SConscript( dirs = 'classes', exports = 'env' )
 
 system = SConscript( dirs='system', exports = 'env' )
 

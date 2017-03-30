@@ -5,6 +5,7 @@
 #include <netinet/in.h>
 #include <memory.h>
 #include <string>
+#include <unistd.h>
 
 using namespace std;
 
@@ -20,6 +21,8 @@ public:
 	virtual ~TCPServer();
 
 	bool Init();
+
+	void Echo();
 };
 
 #endif

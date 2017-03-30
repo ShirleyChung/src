@@ -2,10 +2,10 @@ Import( 'env' )
 
 envSC = env.Clone()
 
-envSC = VariantDir( 'build', '.', duplicate = 0 )
+#envSC = VariantDir( 'build', '.', duplicate = 0 )
 
-SC = envSC.Library( 	target = 'build/libSC',
-			source = Glob('build/*.cpp'),
+SC = envSC.Library( 	target = 'libSC',
+			source = [Glob('*.cpp')]
 		  )
 
 envSC.Install( '#out', SC )
