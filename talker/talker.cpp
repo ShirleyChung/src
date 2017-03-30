@@ -11,12 +11,15 @@ extern "C" IModule* GetModule()
 
 Talker::Talker()
 :_thd(thread_proc, this)
+,_run(true)
 {
+	_name = "talker";
 	AddFunc("hello", &Talker::Hello);
 }
 
 Talker::~Talker()
 {
+	_run = false;
 }
 
 void Talker::Hello(STRARR& cmd)
@@ -26,7 +29,7 @@ void Talker::Hello(STRARR& cmd)
 
 void Talker::thread_proc(Talker* pthis)
 {
-	while(1)
+	while(pthis->_run)
 	{
 		cout<<"hello!"<<rand()<<" \n";
 		int wait = 500 + rand()%5000;

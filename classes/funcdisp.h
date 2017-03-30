@@ -17,6 +17,7 @@ protected:
 		_func_map[key] = func;
 	}
 	
+	/* 將指令傳給每一個有支援icmdmodule的模組 */
 	virtual bool EnterCommandToModule(STRARR& cmd)
 	{
 		if (!_ldr) return false;
@@ -28,25 +29,41 @@ protected:
 			IModule* mod = _ldr->GetModule(*i);
 			if (mod->GetSupportedInterfaceType() & I_COMMAND)
 			{
-				bHasCmd = true;
-				((ICmdModule*)mod)->EnterCommand(cmd);
+				bHasCmd |= ((ICmdModule*)mod)->EnterCommand(cmd);
 			}
 		}
 		return bHasCmd;
-	}	
+	}
+	
+	/* 取得此模組支援的指令字串陣列 */
+	vector<string> GetCommands()
+	{
+		vector<string> list;
+		for( typename FUNCMAP::iterator i = _func_map.begin(); i != _func_map.end(); ++i )
+			list.push_back(i->first);
+		return list;
+	}
 
+	/* 印出模組支援的指令 */
 	virtual void ShowSupportedCmds()
 	{
-		cout<<"Supported command:\n";
-		for( typename FUNCMAP::iterator i = _func_map.begin(); i != _func_map.end(); ++i )
-			cout<< '\t' << i->first << '\n';
+		cout<<_name<<" command:\n";
+
+		PrintCmds(GetCommands());
+	}
+	
+	void PrintCmds(STRARR& cmds)
+	{
+		for( STRARR::const_iterator c = cmds.begin(); c!=cmds.end(); ++c )
+			cout<<'\t'<<*c<<'\n';
 	}
 	
 	Loader* _ldr;
 
 public:
 
-	virtual void EnterCommand(STRARR& cmd)
+	/* 尋找對應的指令, 並執行函式 */
+	virtual bool EnterCommand(STRARR& cmd)
 	{
 		if (cmd.size())
 		{
@@ -55,10 +72,13 @@ public:
 			{
 				if (!EnterCommandToModule(cmd))
 					ShowSupportedCmds();
+				return false;
 			}
 			else
 				if (i->second) (((T*)this)->*(i->second))( vector<string>( cmd.begin()+1, cmd.end() )  );
+			return true;
 		}
+		return false;
 	}
 	
 	FuncDisp(Loader* ldr = NULL):_ldr(ldr){}

@@ -20,8 +20,11 @@ System::System()
 :_ldr("./conf/loadmodule.cfg")
 ,FuncDisp<System>(&_ldr)
 {	
+	_name = "system";
+	
 	AddFunc("listmod", &System::ListModule);
 	AddFunc("loadmod", &System::LoadModule);
+	AddFunc("unloadmod", &System::UnLoadModule);
 	AddFunc("setprompt", &System::SetPrompt);
 	
 	_con.AddCommandHandler(CmdHandler);
@@ -52,6 +55,15 @@ void System::LoadModule(STRARR& cmd)
 {
 	if (cmd.size()>1)
 		_ldr.AddMod(cmd[0], cmd[1]);
+	else
+		cout<<"please specify module name and module path\n";
+}
+
+/* System指令功能:卸除模組 */
+void System::UnLoadModule(STRARR& cmd)
+{
+	if (cmd.size()>0)
+		_ldr.DelMod(cmd[0]);
 	else
 		cout<<"please specify module name and module path\n";
 }

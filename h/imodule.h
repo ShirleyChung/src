@@ -16,6 +16,7 @@ class IModule
 {
 protected:
 	int _interfaceType;
+	string _name;
 public:
 	virtual string GetModuleDesc() = 0;
 	virtual int GetSupportedInterfaceType(){ return _interfaceType; }

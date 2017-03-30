@@ -11,6 +11,7 @@ extern "C" IModule* GetModule()
 
 Man::Man()
 {
+	_name = "man";
 	_desc = "Manual module";
 	AddFunc("help", &Man::Help);
 	AddFunc("man", &Man::Manual);

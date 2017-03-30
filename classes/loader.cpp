@@ -60,6 +60,20 @@ bool Loader::AddMod(const string& name, const string& path)
 		return false;
 }
 
+bool Loader::DelMod(const string& name)
+{
+	MODMAP::iterator itor = _mod_map.find(name);
+	if ( itor != _mod_map.end() )
+	{
+		delete itor->second;
+		_mod_map.erase(itor);
+		_conf.Del(name);
+		return true;
+	}
+	else
+		return false;
+}
+
 vector<string> Loader::GetModuleList()
 {
 	vector<string> list;

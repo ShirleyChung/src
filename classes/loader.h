@@ -28,6 +28,7 @@ public:
 	IModule* Load(const string& file);
 	void Load(const STRMAP& cfg);
 	bool AddMod(const string& name, const string& path);
+	bool DelMod(const string& name);
 
 	IModule* GetModule(const string& modname){ return _mod_map[modname]; }
 	

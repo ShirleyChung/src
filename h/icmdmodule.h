@@ -16,9 +16,10 @@ public:
 	ICmdModule():_outCb(NULL){ _interfaceType |= I_COMMAND; }
 
 	virtual void SetOutputCallback(OutputCallback cb){ _outCb = cb; }
+	virtual vector<string> GetCommands(){ return vector<string>(); }
 	
 /* Needs implement  */
-	virtual void EnterCommand(const std::vector<string>& cmd) = 0;
+	virtual bool EnterCommand(const std::vector<string>& cmd) = 0;
 };
 
 #endif

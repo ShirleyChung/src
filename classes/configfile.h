@@ -13,9 +13,12 @@ public:
 	ConfigFile();
 	ConfigFile(const string& fn);
 	virtual ~ConfigFile();
+	
+	void CheckDirExist(string fn);
 
 	string GetValue(const string& key){ return _cfg_map[key]; }
 	void Add(const string& key, const string& val){ _cfg_map[key] = val; }
+	void Del(const string& key);
 	
 	const STRMAP& GetConfig(){ return _cfg_map; }
 

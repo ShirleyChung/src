@@ -12,6 +12,7 @@ class Talker: public FuncDisp<Talker>
 	static void thread_proc(Talker*);
 
 	void Hello(STRARR&);
+	bool _run;
 public:
 	Talker();
 	virtual ~Talker();

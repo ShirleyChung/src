@@ -14,6 +14,7 @@ class System:public FuncDisp<System>
 	void ListModule(STRARR&);
 
 	void LoadModule(STRARR&);
+	void UnLoadModule(STRARR&);
 
 	void SetPrompt(STRARR&);
 	
