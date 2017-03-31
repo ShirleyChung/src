@@ -6,16 +6,14 @@ TCPServer::TCPServer()
 {
 }
 
-TCPServer::TCPServer(unsigned int port)
-:_port(port)
+TCPServer::~TCPServer()
 {
+	close(_svrsck);
 }
 
-TCPServer::~TCPServer()
-{}
-
-bool TCPServer::Init()
+bool TCPServer::Init(int port)
 {
+	_port = port;
 	
 	memset(&_sckaddr, 0, sizeof(_sckaddr));
 
@@ -41,16 +39,25 @@ bool TCPServer::Init()
 void TCPServer::Echo()
 {
 	listen(_svrsck, 5);
+	cout<<" listening port:"<<_port<<" ,socket:"<<_svrsck<<"\n";
 	sockaddr_in cliaddr;
 	socklen_t clilen = sizeof(sockaddr);
 	int newsck = accept(_svrsck, (sockaddr*)&cliaddr, &clilen);	
 	if (newsck<0) cout<<" accept failed!\n";
+	else
+		cout<<"Accepted.\n";
 
 	char buf[256];
-	memset(buf, 0, 256);
-	int n = read(newsck, buf, 255);
-	string msg = "I got your message:";
-	msg += buf;
-	n = write(newsck, msg.c_str(), msg.size());
+	string msg, ret = "I got it";
+	do
+	{
+		memset(buf, 0, 256);
+		int n = read(newsck, buf, 255);
+		msg = buf;
+		cout<<msg<<'\n';
+		n = write(newsck, ret.c_str(), ret.size());
+	}while( msg != "ok");
+	
 	close(newsck);
+	cout<<" socket "<<newsck<<" closed.\n";
 }

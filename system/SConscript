@@ -1,14 +1,13 @@
-Import( 'env' )
+Import( 'env','sc' )
 
 envSystem = env.Clone(LINKFLAGS = '-ldl')
 
 envSystem.VariantDir( 'build', ['src'], duplicate = 0 )
-envSystem.VariantDir( '../classes/build', ['../classes'], duplicate = 0 )
 
 system = envSystem.Program(
 	target = 'build/system', 
-	source = ['build/system.cpp', Glob('../classes/build/*.cpp')],
-	LIBPATH = '#out', LIBS='pthread')
+	source = ['build/system.cpp'],
+	LIBPATH = '#out', LIBS=['pthread','SC'])
 
 envSystem.Install( '#out', system )
 envSystem.Alias( 'install', '#out' )

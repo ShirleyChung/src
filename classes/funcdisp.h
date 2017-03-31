@@ -17,11 +17,10 @@ protected:
 		_func_map[key] = func;
 	}
 	
-	/* 將指令傳給每一個有支援icmdmodule的模組 */
+	/* 搜尋模組中對應的指令並執行 */
 	virtual bool EnterCommandToModule(STRARR& cmd)
 	{
 		if (!_ldr) return false;
-		bool bHasCmd = false;
 
 		STRARR arr = _ldr->GetModuleList();
 		for( STRARR::const_iterator i = arr.begin(); i != arr.end(); ++i )
@@ -29,10 +28,11 @@ protected:
 			IModule* mod = _ldr->GetModule(*i);
 			if (mod->GetSupportedInterfaceType() & I_COMMAND)
 			{
-				bHasCmd |= ((ICmdModule*)mod)->EnterCommand(cmd);
+				if ( ((ICmdModule*)mod)->EnterCommand(cmd) )
+					return true;
 			}
 		}
-		return bHasCmd;
+		return false;
 	}
 	
 	/* 取得此模組支援的指令字串陣列 */

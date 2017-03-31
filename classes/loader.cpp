@@ -12,7 +12,6 @@ Loader::Loader(const string& fn)
 
 Loader::~Loader()
 {
-	_conf.Save();
 }
 
 IModule* Loader::Load(const string& fn)

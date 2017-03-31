@@ -1,12 +1,13 @@
 Import( 'env' )
 
-envserver = env.Clone()
+envserver = env.Clone(CXXFLAGS=['-std=c++11', '-pthread'])
 
-#envman = VariantDir( 'build', ['.'], duplicate = 0 )
+#envserver = VariantDir( 'build', ['.'], duplicate = 0 )
 
-envserver = envserver.SharedLibrary( target = 'build/libserver', 
+libserver = envserver.SharedLibrary( target = 'build/libserver', 
 	source = [Glob('server.cpp')], 
-	LIBPATH = 'build')
+	LIBPATH = '#out',
+	LIBS = ['SC','pthread'])
 
-envserver.Install( '#out', )
+envserver.Install( '#out', libserver )
 envserver.Alias( 'install', '#out' )

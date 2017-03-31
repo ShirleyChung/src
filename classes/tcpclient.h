@@ -11,13 +11,12 @@ using namespace std;
 
 class TCPClient
 {
-	typedef unsigned short ushort;
-
 	int _clisck;
 public:
 	TCPClient();
-	bool Connect(string, ushort port);
-	bool SendTo(int socket, string msg);
+	virtual ~TCPClient();
+	bool Connect(string ip, int port);
+	bool Send(string msg);
 };
 
 #endif
