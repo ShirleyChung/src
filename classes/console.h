@@ -5,6 +5,8 @@
 #include "../h/common_def.h"
 #include "configfile.h"
 
+#define ckey "prompt"
+
 class Console
 {
 	CMDCBLIST _callbackList;
@@ -20,7 +22,7 @@ public:
 	virtual ~Console();
 
 	void Prompt();
-	void SetPrompt(string str){ if(str.size()) _prompt = str; }
+	void SetPrompt(string str){ if(str.size()){ _prompt = str; _conf.Add(ckey, _prompt);  } }
 	
 	void AddCommandHandler(cmd_handler cb){ if(cb) _callbackList.push_back(cb); }
 };

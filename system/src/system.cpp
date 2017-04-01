@@ -18,6 +18,7 @@ void CallbackHanlder(string cmd)
 /* System類別的constructor*/
 System::System()
 :_ldr("./conf/loadmodule.cfg")
+,_aliasconf("./conf/alias.cfg")
 ,FuncDisp<System>(&_ldr)
 {	
 	_name = "system";
@@ -26,6 +27,9 @@ System::System()
 	AddFunc("loadmod", &System::LoadModule);
 	AddFunc("unloadmod", &System::UnLoadModule);
 	AddFunc("setprompt", &System::SetPrompt);
+	AddFunc("alias", &System::Alias);
+
+	LoadAlias();
 	
 	_con.AddCommandHandler(CmdHandler);
 
@@ -53,10 +57,43 @@ void System::ListModule(STRARR&)
 /* System指令功能:載入模組 */
 void System::LoadModule(STRARR& cmd)
 {
-	if (cmd.size()>1)
+	if (cmd.size()==1)
+		_ldr.AddMod(cmd[0]);
+	else if (cmd.size()>1)
 		_ldr.AddMod(cmd[0], cmd[1]);
 	else
-		cout<<"please specify module name and module path\n";
+		cout<<"please specify module path\n";
+}
+
+/* 載入別名  */
+void System::LoadAlias()
+{
+	const STRMAP& cfgmap = _aliasconf.GetConfig();
+	for( STRMAP::const_iterator i = cfgmap.begin(); i != cfgmap.end(); ++i )
+		AddFunc(i->first, _func_map[i->second]);	
+}
+
+/* */
+void System::SaveAlias()
+{
+	FUNC2CMD func2cmd;
+	for( FUNCMAP::iterator itor = _func_map.begin(); itor != _func_map.end(); ++itor )
+	{
+	//	FUNC2CMD::iterator i = func2cmd.find(itor->second);
+	//	if (i != func2cmd.end())
+	//		_aliasconf.Add(itor->first, i->second);
+	//	func2cmd[itor->second] = itor->first;		
+	}
+}
+
+void System::Alias(STRARR& cmd)
+{
+	if (cmd.size() < 2)
+		cout<<"usage:alias (alias) (command)\n";
+	else
+	{
+		AddFunc(cmd[0], _func_map[cmd[1]]);
+	}
 }
 
 /* System指令功能:卸除模組 */

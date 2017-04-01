@@ -9,7 +9,7 @@ class System:public FuncDisp<System>
 {
 	Loader _ldr;
 	Console _con;
-	ConfigFile _modconf;
+	ConfigFile _aliasconf;
 	
 	void ListModule(STRARR&);
 
@@ -17,8 +17,12 @@ class System:public FuncDisp<System>
 	void UnLoadModule(STRARR&);
 
 	void SetPrompt(STRARR&);
+	void Alias(STRARR&);
 	
 	void SetModuleOutputCallback(OutputCallback);
+
+	void LoadAlias();
+	void SaveAlias();
 
 public:
 	System();

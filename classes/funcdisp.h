@@ -10,6 +10,7 @@ class FuncDisp : public ICmdModule
 protected:
 	typedef void(T::*funcptr)(STRARR&);
 	typedef map<string, funcptr> FUNCMAP;
+	typedef map<funcptr, string> FUNC2CMD;
 	
 	FUNCMAP _func_map;
 	

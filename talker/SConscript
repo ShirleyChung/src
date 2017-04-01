@@ -6,7 +6,7 @@ envtalker = env.Clone(CXXFLAGS=['-std=c++11', '-pthread'])
 
 libtalker = envtalker.SharedLibrary( target = 'build/libtalker', 
 	source = [Glob('talker.cpp')], 
-	LIBS=['pthread'])
+	LIBPATH='#out',LIBS=['pthread','SC'])
 
 envtalker.Install( '#out', libtalker )
 envtalker.Alias( 'install', '#out' )

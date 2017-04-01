@@ -8,14 +8,16 @@
 
 class Server: public FuncDisp<Server>, public TCPServer
 {
+	static Server* _inst;
 	void ServerStart(STRARR& cmd);
 	void ServerStop(STRARR& cmd);
 	
 	static void thread_proc(Server*);
 
 	thread _thd;
-public:
 	Server();
+public:
+	static Server* GetModuleInst(){ if(_inst) return _inst; else{ _inst = new Server(); return _inst; } } 
 	virtual string GetModuleDesc(){ return "tcp server"; }
 	
 };

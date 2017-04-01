@@ -2,3 +2,4 @@
 *.os
 *.a
 *.so
+*.dylib

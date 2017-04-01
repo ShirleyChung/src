@@ -7,6 +7,8 @@
 using namespace std;
 
 vector<string> Tokenize(const string&);
+vector<string> Tokenize(const string&, const string& sep);
 string Tokencombine(const vector<string>&);
+string Tokencombine(const vector<string>&, const string& sep);
 
 #endif

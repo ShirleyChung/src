@@ -18,8 +18,10 @@ protected:
 	int _interfaceType;
 	string _name;
 public:
+	virtual ~IModule(){};
 	virtual string GetModuleDesc() = 0;
 	virtual int GetSupportedInterfaceType(){ return _interfaceType; }
+	virtual string GetName(){ return _name; }
 };
 
 #endif

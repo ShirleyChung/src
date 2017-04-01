@@ -6,11 +6,16 @@
 
 class Client: public FuncDisp<Client>, public TCPClient
 {
+	static Client* _inst;
+
 	void Connect(STRARR& cmd);
 	void Send(STRARR& cmd);
 
-public:
 	Client();
+public:
+	static Client* GetModuleInst(){ if (!_inst) { _inst = new Client(); return _inst; } else return _inst; };	
+	
+	
 	virtual string GetModuleDesc(){ return "tcp client"; }
 	
 };

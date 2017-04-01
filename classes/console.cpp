@@ -3,8 +3,6 @@
 
 #define MAX_HISTORY 200
 
-#define ckey "prompt"
-
 Console::Console()
 :_conf("conf/console.cfg")
 {

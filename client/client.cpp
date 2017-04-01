@@ -4,8 +4,10 @@
 
 extern "C" IModule* GetModule()
 {
-	return (IModule*)(new Client());
+	return Client::GetModuleInst();
 }
+
+Client* Client::_inst = NULL;
 
 Client::Client()
 {

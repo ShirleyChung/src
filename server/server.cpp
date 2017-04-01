@@ -2,8 +2,10 @@
 
 extern "C" IModule* GetModule()
 {
-	return (IModule*)(new Server());
+	return Server::GetModuleInst();
 }
+
+Server* Server::_inst = NULL;
 
 Server::Server()
 {
@@ -15,6 +17,9 @@ Server::Server()
 void Server::ServerStart(STRARR& cmd)
 {
 	int port = 5000;
+	if (cmd.size() > 0)
+		port = atoi(cmd[0].c_str());
+
 	if (!Init(port))
 		cout<<"port "<<port<<" cannot be initialed.\n";
 	else

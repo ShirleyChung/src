@@ -59,6 +59,20 @@ bool Loader::AddMod(const string& name, const string& path)
 		return false;
 }
 
+bool Loader::AddMod(const string& path)
+{
+	IModule* mod = Load(path);
+	if (mod)
+	{
+		string name = mod->GetName();
+		_mod_map[name] = mod;
+		_conf.Add(name, path);
+		return true;
+	}
+	else
+		return false;
+}
+
 bool Loader::DelMod(const string& name)
 {
 	MODMAP::iterator itor = _mod_map.find(name);
