@@ -2,11 +2,9 @@
 #include "../classes/tool.h"
 #include <iostream>
 
-Man* Man::_inst = 0;
-
 extern "C" IModule* GetModule()
 {
-	return Man::GetModule();
+	return ManSingleton::GetInstance();
 }
 
 Man::Man()

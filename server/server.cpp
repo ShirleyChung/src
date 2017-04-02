@@ -2,10 +2,8 @@
 
 extern "C" IModule* GetModule()
 {
-	return Server::GetModuleInst();
+	return Singleton<Server>::GetInstance();
 }
-
-Server* Server::_inst = NULL;
 
 Server::Server()
 {
@@ -13,6 +11,9 @@ Server::Server()
 	AddFunc("startserver", &Server::ServerStart);
 	AddFunc("stopserver", &Server::ServerStop);
 }
+
+Server::~Server()
+{}
 
 void Server::ServerStart(STRARR& cmd)
 {

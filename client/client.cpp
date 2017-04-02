@@ -4,10 +4,8 @@
 
 extern "C" IModule* GetModule()
 {
-	return Client::GetModuleInst();
+	return Singleton<Client>::GetInstance();
 }
-
-Client* Client::_inst = NULL;
 
 Client::Client()
 {
@@ -15,6 +13,8 @@ Client::Client()
 	AddFunc("connect", &Client::Connect);
 	AddFunc("send", &Client::Send);
 }
+
+Client::~Client(){}
 
 void Client::Connect(STRARR& cmd)
 {

@@ -2,11 +2,9 @@
 #include <stdlib.h>
 #include <chrono>
 
-Talker* Talker::_inst = 0;
-
 extern "C" IModule* GetModule()
 {
-	return Talker::GetModule();
+	return Singleton<Talker>::GetInstance();
 }
 
 Talker::Talker()

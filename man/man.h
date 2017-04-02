@@ -2,13 +2,12 @@
 #define _manual_help_2017_module
 
 #include "../classes/funcdisp.hpp"
+#include "../classes/singleton.hpp"
 
 using namespace std;
 
 class Man: public FuncDisp<Man>
 {
-	static Man* _inst;
-	
 	void Help(STRARR&);
 
 	void Manual(STRARR&);
@@ -18,10 +17,8 @@ class Man: public FuncDisp<Man>
 public:
 	Man();
 	virtual string GetModuleDesc(){ return _desc; }
-
-	static IModule* GetModule(){
-		return (_inst)? _inst: new Man();
-	}
 };
+
+typedef Singleton<Man> ManSingleton;
 
 #endif
