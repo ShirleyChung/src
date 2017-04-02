@@ -2,7 +2,7 @@
 #define _system_obj_for_basic_interface_console_and_control_mediator_2017
 
 #include "../../classes/console.h"
-#include "../../classes/funcdisp.h"
+#include "../../classes/funcdisp.hpp"
 #include "../../classes/configfile.h"
 
 class System:public FuncDisp<System>

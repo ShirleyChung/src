@@ -1,7 +1,7 @@
 #ifndef _tcpclient_module_for_listening_request_support_icommodule_2017
 #define _tcpclient_module_for_listening_request_support_icommodule_2017
 
-#include "../classes/funcdisp.h"
+#include "../classes/funcdisp.hpp"
 #include "../classes/tcpclient.h"
 
 class Client: public FuncDisp<Client>, public TCPClient

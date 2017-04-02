@@ -1,7 +1,7 @@
 #ifndef _manual_help_2017_module
 #define _manual_help_2017_module
 
-#include "../classes/funcdisp.h"
+#include "../classes/funcdisp.hpp"
 
 using namespace std;
 

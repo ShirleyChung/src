@@ -3,7 +3,7 @@
 
 #include <thread>
 
-#include "../classes/funcdisp.h"
+#include "../classes/funcdisp.hpp"
 
 class Talker: public FuncDisp<Talker>
 {
