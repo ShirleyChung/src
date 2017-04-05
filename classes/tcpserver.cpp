@@ -3,6 +3,8 @@
 #include <memory.h>
 
 TCPServer::TCPServer()
+:_lsnNum(5)
+,_bufSz(1024)
 {
 }
 
@@ -38,7 +40,7 @@ bool TCPServer::Init(int port)
 
 void TCPServer::Echo()
 {
-	listen(_svrsck, 5);
+	listen(_svrsck, _lsnNum);
 	cout<<" listening port:"<<_port<<" ,socket:"<<_svrsck<<"\n";
 	sockaddr_in cliaddr;
 	socklen_t clilen = sizeof(sockaddr);
@@ -47,17 +49,19 @@ void TCPServer::Echo()
 	else
 		cout<<"Accepted.\n";
 
-	char buf[256];
+	char* buf = new char[_bufSz];
 	string msg, ret = "I got it";
 	do
 	{
-		memset(buf, 0, 256);
-		int n = read(newsck, buf, 255);
+		memset(buf, 0, _bufSz);
+		int n = read(newsck, buf, _bufSz);
 		msg = buf;
-		cout<<msg<<'\n';
+		cout<<"msg="<<msg<<", sizeof msg="<<msg.size()<<'\n';
 		n = write(newsck, ret.c_str(), ret.size());
-	}while( msg != "ok\n");
+	}while( msg != "ok ");
 	
 	close(newsck);
 	cout<<" socket "<<newsck<<" closed.\n";
+
+	delete[] buf;
 }

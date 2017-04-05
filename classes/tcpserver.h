@@ -11,8 +11,13 @@ using namespace std;
 
 class TCPServer{
 
+protected:
+
 	int _port;
 	int _svrsck; //server socket
+	int _lsnNum; //listen numbers
+	size_t _bufSz; //recv buffer size
+
 	sockaddr_in _sckaddr;
 
 public:

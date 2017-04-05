@@ -11,6 +11,8 @@ using namespace std;
 
 class TCPClient
 {
+protected:
+	int _bufSz;
 	int _clisck;
 public:
 	TCPClient();

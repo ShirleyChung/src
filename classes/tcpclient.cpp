@@ -4,6 +4,7 @@
 #include <memory.h>
 
 TCPClient::TCPClient()
+:_bufSz(1024)
 {}
 
 TCPClient::~TCPClient()
@@ -39,10 +40,11 @@ bool TCPClient::Send(string msg)
 	}
 	else
 	{
-		char buf[256];
-		memset(buf, 0, 256);
-		read(_clisck, buf, 255);
+		char* buf = new char[_bufSz];
+		memset(buf, 0, _bufSz);
+		read(_clisck, buf, _bufSz-1);
 		cout<<buf<<"\n";
+		delete[] buf;
 		return true;
 	}
 }
