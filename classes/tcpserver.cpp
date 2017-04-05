@@ -56,8 +56,7 @@ void TCPServer::Echo()
 		msg = buf;
 		cout<<msg<<'\n';
 		n = write(newsck, ret.c_str(), ret.size());
-		if (msg=="ok") break;
-	}while( msg != "ok");
+	}while( msg != "ok\n");
 	
 	close(newsck);
 	cout<<" socket "<<newsck<<" closed.\n";

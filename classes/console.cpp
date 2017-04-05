@@ -13,7 +13,6 @@ Console::Console()
 
 Console::~Console()
 {
-	_conf.Save();
 }
 
 void Console::Prompt()

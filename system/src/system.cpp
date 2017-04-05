@@ -6,7 +6,9 @@ System sys;
 /* 設定給console的輸入字串回呼函式 */
 void CmdHandler(STRARR& cmd)
 {
-	sys.EnterCommand(cmd);
+	if (!sys.EnterCommand(cmd))
+		cout << "Supported Commands:\n" << sys.GetSupportedCmdString();
+		
 }
 
 /* 設定給module的輸入字串回呼函式 */

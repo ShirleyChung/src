@@ -13,6 +13,7 @@ protected:
 	typedef map<funcptr, string> FUNC2CMD;
 	
 	FUNCMAP _func_map;
+	string _supportCmds;
 	
 	void AddFunc(const string& key, funcptr func){
 		_func_map[key] = func;
@@ -21,6 +22,8 @@ protected:
 	/* 搜尋模組中對應的指令並執行 */
 	virtual bool EnterCommandToModule(STRARR& cmd)
 	{
+		_supportCmds = SupportedCmdString(GetCommands());				
+
 		if (!_ldr) return false;
 
 		STRARR arr = _ldr->GetModuleList();
@@ -29,10 +32,14 @@ protected:
 			IModule* mod = _ldr->GetModule(*i);
 			if (mod->GetSupportedInterfaceType() & I_COMMAND)
 			{
-				if ( ((ICmdModule*)mod)->EnterCommand(cmd) )
+				ICmdModule* cmod = (ICmdModule*)mod;
+				if ( cmod->EnterCommand(cmd) )
 					return true;
+				else
+					_supportCmds += SupportedCmdString(cmod->GetCommands());				
 			}
 		}
+
 		return false;
 	}
 	
@@ -46,22 +53,19 @@ protected:
 	}
 
 	/* 印出模組支援的指令 */
-	virtual void ShowSupportedCmds()
+	virtual string SupportedCmdString(STRARR& cmds)
 	{
-		cout<<_name<<" command:\n";
-
-		PrintCmds(GetCommands());
-	}
-	
-	void PrintCmds(STRARR& cmds)
-	{
+		string cmdlist;
 		for( STRARR::const_iterator c = cmds.begin(); c!=cmds.end(); ++c )
-			cout<<'\t'<<*c<<'\n';
-	}
+			cmdlist += '\t' + *c + '\n';
+		return cmdlist;
+	}	
 	
 	Loader* _ldr;
 
 public:
+
+	virtual string GetSupportedCmdString(){ return _supportCmds; }
 
 	/* 尋找對應的指令, 並執行函式 */
 	virtual bool EnterCommand(STRARR& cmd)
@@ -72,8 +76,7 @@ public:
 			if (i == _func_map.end())
 			{
 				if (!EnterCommandToModule(cmd))
-					ShowSupportedCmds();
-				return false;
+					return false;
 			}
 			else
 				if (i->second) (((T*)this)->*(i->second))( vector<string>( cmd.begin()+1, cmd.end() )  );
