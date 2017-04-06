@@ -1,10 +1,12 @@
 #include "tcpserver.h"
 #include <iostream>
 #include <memory.h>
+#include <arpa/inet.h>
 
 TCPServer::TCPServer()
 :_lsnNum(5)
 ,_bufSz(1024)
+,_do_wait(true)
 {
 }
 
@@ -58,10 +60,35 @@ void TCPServer::Echo()
 		msg = buf;
 		cout<<"msg="<<msg<<", sizeof msg="<<msg.size()<<'\n';
 		n = write(newsck, ret.c_str(), ret.size());
-	}while( msg != "ok ");
+	}while( msg != "ok");
 	
 	close(newsck);
 	cout<<" socket "<<newsck<<" closed.\n";
 
 	delete[] buf;
+}
+
+void TCPServer::WaitForConnection()
+{
+	listen(_svrsck, _lsnNum);
+	cout<<" listening port:"<<_port<<" ,socket:"<<_svrsck<<"\n";
+	sockaddr_in cliaddr;
+	socklen_t clilen = sizeof(sockaddr);
+
+	_sckmap.clear();
+
+	while(_do_wait)
+	{
+		int sck = accept(_svrsck, (sockaddr*)&cliaddr, &clilen);	
+		if (sck<0)
+			cout<<" accept failed!\n";
+		else
+		{
+			cout<<"Accepted.\n";
+			char buf[INET_ADDRSTRLEN];memset(buf, 0, INET_ADDRSTRLEN);
+			inet_ntop(AF_INET, &cliaddr.sin_addr, buf, INET_ADDRSTRLEN);
+			string cip = buf;
+			_sckmap[cip] = sck;
+		}
+	}
 }

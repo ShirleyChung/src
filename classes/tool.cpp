@@ -1,4 +1,5 @@
 #include "tool.h"
+#include <algorithm>
 
 vector<string> Tokenize(const string& line, const string& sep)
 {
@@ -22,11 +23,17 @@ vector<string> Tokenize(const string& str)
 	return Tokenize(str, " ");	
 }
 
+string& rtrim(string& s, const string& sep)
+{
+	s.erase( s.find_last_not_of(sep)+1 );
+}
+
 string Tokencombine(const vector<string>& arr, const string& sep)
 {
 	string line;
 	for( vector<string>::const_iterator i = arr.begin(); i != arr.end(); ++i )
 		line += *i + sep;
+	rtrim(line, sep);
 	return line;
 }
 

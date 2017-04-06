@@ -11,4 +11,6 @@ vector<string> Tokenize(const string&, const string& sep);
 string Tokencombine(const vector<string>&);
 string Tokencombine(const vector<string>&, const string& sep);
 
+string& rtrim(string& s, const string& sep);
+
 #endif

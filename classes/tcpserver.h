@@ -6,19 +6,25 @@
 #include <memory.h>
 #include <string>
 #include <unistd.h>
+#include <map>
 
 using namespace std;
 
 class TCPServer{
 
 protected:
+	typedef map<string, int> SCKMAP;
+	SCKMAP _sckmap;
 
 	int _port;
 	int _svrsck; //server socket
 	int _lsnNum; //listen numbers
 	size_t _bufSz; //recv buffer size
+	bool _do_wait; //wait for accept
 
 	sockaddr_in _sckaddr;
+
+	void WaitForConnection();
 
 public:
 	TCPServer();

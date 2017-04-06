@@ -32,7 +32,7 @@ void Server::ServerStart(STRARR& cmd)
 
 void Server::thread_proc(Server* pThis)
 {
-	pThis->Echo();
+	pThis->WaitForConnection();
 }
 
 void Server::ServerStop(STRARR& cmd)
