@@ -92,7 +92,11 @@ void TCPServer::WaitForConnection()
 			string cip(INET_ADDRSTRLEN+1, 0);
 
 			inet_ntop(AF_INET, &cliaddr.sin_addr, (char*)&(*cip.begin()), INET_ADDRSTRLEN);
-
+			if (_sckmap.find(cip) != _sckmap.end())
+			{
+				cout<<cip<<" has already connected, close previous socket.\n";
+				close(_sckmap[cip]);
+			}
 			_sckmap[cip] = sck;
 			OnConnect(cip, sck);
 		}

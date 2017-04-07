@@ -6,6 +6,7 @@ extern "C" IModule* GetModule()
 }
 
 Server::Server()
+:_getstr(true)
 {
 	_name = "server";
 	AddFunc("startserver", &Server::ServerStart);
@@ -25,14 +26,32 @@ void Server::ServerStart(STRARR& cmd)
 		cout<<"port "<<port<<" cannot be initialed.\n";
 	else
 	{
-		_thd = thread(thread_proc, this);
+		_thd = thread(thread_wait_connection, this);
 		cout<<"Server started.\n";
 	}
 }
 
-void Server::thread_proc(Server* pThis)
+void Server::thread_wait_connection(Server* pThis)
 {
 	pThis->WaitForConnection();
+}
+
+void Server::thread_get_string(Server* pThis, const string& ip)
+{
+	string msg;
+	int sz = pThis->_bufSz;
+	do
+	{
+		string buf(sz, 0);
+		int n = read(pThis->_sckmap[ip], (char*)&(*buf.begin()), sz);
+		msg += buf;
+		if (n < sz)
+		{
+			pThis->OnGetRemoteString(ip, msg);
+			msg.clear();
+		}
+	}
+	while(pThis->_getstr);
 }
 
 void Server::ServerStop(STRARR& cmd)
@@ -42,5 +61,12 @@ void Server::ServerStop(STRARR& cmd)
 
 void Server::OnConnect(string ip, int sck)
 {
+	cout << ip << " connected. \n";
 	
+	_thrdmap[ip] = thread(thread_get_string, this, ip);
+}
+
+void Server::OnGetRemoteString(const string& ip, const string& msg)
+{
+	cout<< ip << ":" << msg <<'\n';
 }

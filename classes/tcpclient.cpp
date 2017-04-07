@@ -38,13 +38,5 @@ bool TCPClient::Send(string msg)
 		cout<<" write to "<<_clisck<<" failed\n";
 		return false;
 	}
-	else
-	{
-		char* buf = new char[_bufSz];
-		memset(buf, 0, _bufSz);
-		read(_clisck, buf, _bufSz-1);
-		cout<<buf<<"\n";
-		delete[] buf;
-		return true;
-	}
+	return true;
 }

@@ -8,12 +8,22 @@
 
 class Server: public FuncDisp<Server>, public TCPServer
 {
+protected:
+	typedef map<string, thread> THRDMAP;
+
+	THRDMAP _thrdmap;
+
+	bool _getstr;
+
 	void ServerStart(STRARR& cmd);
 	void ServerStop(STRARR& cmd);
 	
-	static void thread_proc(Server*);
+	static void thread_wait_connection(Server*);
+	static void thread_get_string(Server*, const string& ip);
 
 	thread _thd;
+	virtual void OnGetRemoteString(const string& ip, const string& msg);
+
 public:
 	Server();
 	virtual ~Server();
