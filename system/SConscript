@@ -1,8 +1,8 @@
 Import( 'env','sc' )
 
-envSystem = env.Clone(CXXFLAGS='-g', LINKFLAGS = '-ldl -g')
+VariantDir( 'build', '.', duplicate = 0 )
 
-envSystem.VariantDir( 'build', ['src'], duplicate = 0 )
+envSystem = env.Clone(CXXFLAGS='-g', LINKFLAGS = '-ldl -g')
 
 system = envSystem.Program(
 	target = 'build/system', 

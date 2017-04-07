@@ -39,3 +39,8 @@ void Server::ServerStop(STRARR& cmd)
 {
 	cout<<"Server stoped.\n";
 }
+
+void Server::OnConnect(string ip, int sck)
+{
+	
+}

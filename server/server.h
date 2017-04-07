@@ -18,6 +18,9 @@ public:
 	Server();
 	virtual ~Server();
 	virtual string GetModuleDesc(){ return "tcp server"; }
+
+	// tcpserver
+	virtual void OnConnect(string ip, int sck);
 	
 };
 

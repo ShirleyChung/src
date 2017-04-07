@@ -7,12 +7,14 @@ TCPServer::TCPServer()
 :_lsnNum(5)
 ,_bufSz(1024)
 ,_do_wait(true)
+,_svrsck(-1)
 {
 }
 
 TCPServer::~TCPServer()
 {
-	close(_svrsck);
+	CloseAllSession();
+	if (_svrsck>=0) close(_svrsck);
 }
 
 bool TCPServer::Init(int port)
@@ -24,6 +26,8 @@ bool TCPServer::Init(int port)
 	_sckaddr.sin_family = AF_INET;
 	_sckaddr.sin_addr.s_addr = INADDR_ANY;
 	_sckaddr.sin_port = htons(_port);
+
+	if (_svrsck>=0) close(_svrsck);
 	
 	_svrsck = socket(AF_INET, SOCK_STREAM, 0);
 	if (_svrsck <0)
@@ -85,10 +89,46 @@ void TCPServer::WaitForConnection()
 		else
 		{
 			cout<<"Accepted.\n";
-			char buf[INET_ADDRSTRLEN];memset(buf, 0, INET_ADDRSTRLEN);
-			inet_ntop(AF_INET, &cliaddr.sin_addr, buf, INET_ADDRSTRLEN);
-			string cip = buf;
+			string cip(INET_ADDRSTRLEN+1, 0);
+
+			inet_ntop(AF_INET, &cliaddr.sin_addr, (char*)&(*cip.begin()), INET_ADDRSTRLEN);
+
 			_sckmap[cip] = sck;
+			OnConnect(cip, sck);
 		}
 	}
+}
+
+void TCPServer::CloseSession(string ip)
+{
+	SCKMAP::iterator i = _sckmap.find(ip);
+	if (i != _sckmap.end() )
+	{
+		close(i->second);
+		_sckmap.erase(i);
+	}
+}
+
+void TCPServer::CloseAllSession()
+{
+	for( SCKMAP::iterator itor = _sckmap.begin(); itor != _sckmap.end(); ++itor )
+		close(itor->second);
+	_sckmap.clear();
+}
+
+int TCPServer::Send(string ip, string msg)
+{
+	SCKMAP::iterator i = _sckmap.find(ip);
+	if ( i == _sckmap.end()) return -1;
+
+	return write(i->second, msg.c_str(), msg.size());
+}
+
+int TCPServer::Recv(string ip, string& msg)
+{
+	SCKMAP::iterator i = _sckmap.find(ip);
+	if ( i == _sckmap.end()) return -1;
+
+	msg.reserve(_bufSz+1);
+	return read(i->second, (char*)&(*msg.begin()), _bufSz);
 }

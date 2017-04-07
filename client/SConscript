@@ -2,10 +2,10 @@ Import( 'env' )
 
 envclient = env.Clone()
 
-#envclient = VariantDir( 'build', ['.'], duplicate = 0 )
+envclient.VariantDir( 'build', ['.'], duplicate = 0 )
 
 libclient = envclient.SharedLibrary( target = 'build/libClient', 
-	source = [Glob('client.cpp')], 
+	source = [Glob('build/client.cpp')], 
 	LIBPATH = '#out',
 	LIBS = ['SC'])
 

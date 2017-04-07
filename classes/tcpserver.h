@@ -26,6 +26,12 @@ protected:
 
 	void WaitForConnection();
 
+	void CloseSession(string ip);
+
+	void CloseAllSession();
+
+	virtual void OnConnect(string ip, int sck) = 0;
+
 public:
 	TCPServer();
 	virtual ~TCPServer();
@@ -33,6 +39,10 @@ public:
 	bool Init(int port);
 
 	void Echo();
+
+	int Send(string ip, string msg);
+
+	int Recv(string ip, string& msg);
 };
 
 #endif
