@@ -14,7 +14,9 @@ class TCPServer{
 
 protected:
 	typedef map<string, int> SCKMAP;
+	typedef map<int , sockaddr_in> SCKINFO;
 	SCKMAP _sckmap;
+	SCKINFO _sckinfo;
 
 	int _port;
 	int _svrsck; //server socket
@@ -41,8 +43,10 @@ public:
 	void Echo();
 
 	int Send(string ip, string msg);
+	int Send(int sck, string msg);
 
 	int Recv(string ip, string& msg);
+	int Recv(int sck, string& msg);
 };
 
 #endif

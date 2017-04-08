@@ -9,33 +9,91 @@ TCPClient::TCPClient()
 
 TCPClient::~TCPClient()
 {
-	close(_clisck);
+	CloseAll();
 }
 
-bool TCPClient::Connect(string ip, int port)
+void TCPClient::CloseAll()
 {
-	_clisck = socket(AF_INET, SOCK_STREAM, 0);
-	if (_clisck<0){ cout<<"socket init err!\n"; return false;}
+	for( SCKMAP::iterator i = _sckmap.begin(); i != _sckmap.end(); ++i )
+		close(i->second);
+	_sckmap.clear();
+	_sckinfo.clear();
+}
+
+int TCPClient::Connect(string ip, int port)
+{
+	cout<<"connecting to "<<ip<<":"<<port<<"...";
+	int sck = socket(AF_INET, SOCK_STREAM, 0);
+
+	if (sck<0){ cout<<"socket init err!\n"; return sck;}
 	in_addr ipv4addr;
 	sockaddr_in serv_addr;
 	serv_addr.sin_family = AF_INET;
 	inet_pton(AF_INET, ip.c_str(), &serv_addr.sin_addr.s_addr);
 	serv_addr.sin_port = htons(port);
-	if ( 0 > connect(_clisck, (sockaddr*)&serv_addr, sizeof(serv_addr)) )
+	if ( 0 > connect(sck, (sockaddr*)&serv_addr, sizeof(serv_addr)) )
 	{
 		cout<<" connect error!\n";
+		return -1;
+	}
+	_sckmap[ip] = sck;
+	_sckinfo[sck] = serv_addr;
+	cout <<"ok.\n";
+
+	return sck;
+}
+
+bool TCPClient::Close(int sck)
+{
+	SCKINFO::iterator i = _sckinfo.find(sck);
+	if ( i != _sckinfo.end() )
+	{
+		Close(sck);
+		_sckinfo.erase(i);
+		for( SCKMAP::iterator s = _sckmap.begin(); s != _sckmap.end();)
+			if (s->second == sck){
+				_sckmap.erase(s); s = _sckmap.begin();
+			}
+			else ++s;
+		return true;
+	}
+	return false;
+}
+
+bool TCPClient::Close(string ip)
+{
+	SCKMAP::iterator i = _sckmap.find(ip);
+	if ( i != _sckmap.end() )
+	{
+		Close(i->second);
+		_sckmap.erase(i);
+		_sckinfo.erase(i->second);
+		return true;
+	}
+	return false;
+}
+
+bool TCPClient::Send(int sck, string msg)
+{
+	SCKINFO::iterator i = _sckinfo.find(sck);
+	if (i == _sckinfo.end()) return false;
+
+	if ( 0 > write(sck, msg.c_str(), msg.size()) )
+	{
+		cout<<" write to "<< i->first <<" failed\n";
 		return false;
 	}
-	cout << ip <<" connect ok.\n";
-
 	return true;
 }
 
-bool TCPClient::Send(string msg)
+bool TCPClient::Send(string ip, string msg)
 {
-	if ( 0 > write(_clisck, msg.c_str(), msg.size()) )
+	SCKMAP::iterator i = _sckmap.find(ip);
+	if (i == _sckmap.end()) return false;
+
+	if ( 0 > write(i->second, msg.c_str(), msg.size()) )
 	{	
-		cout<<" write to "<<_clisck<<" failed\n";
+		cout<<" write to "<< i->first <<" failed\n";
 		return false;
 	}
 	return true;

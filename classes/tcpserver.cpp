@@ -92,12 +92,9 @@ void TCPServer::WaitForConnection()
 			string cip(INET_ADDRSTRLEN+1, 0);
 
 			inet_ntop(AF_INET, &cliaddr.sin_addr, (char*)&(*cip.begin()), INET_ADDRSTRLEN);
-			if (_sckmap.find(cip) != _sckmap.end())
-			{
-				cout<<cip<<" has already connected, close previous socket.\n";
-				close(_sckmap[cip]);
-			}
 			_sckmap[cip] = sck;
+			_sckinfo[sck] = cliaddr;
+
 			OnConnect(cip, sck);
 		}
 	}
@@ -109,6 +106,7 @@ void TCPServer::CloseSession(string ip)
 	if (i != _sckmap.end() )
 	{
 		close(i->second);
+		_sckinfo.erase(i->second);
 		_sckmap.erase(i);
 	}
 }
@@ -118,6 +116,7 @@ void TCPServer::CloseAllSession()
 	for( SCKMAP::iterator itor = _sckmap.begin(); itor != _sckmap.end(); ++itor )
 		close(itor->second);
 	_sckmap.clear();
+	_sckinfo.clear();
 }
 
 int TCPServer::Send(string ip, string msg)
@@ -128,6 +127,14 @@ int TCPServer::Send(string ip, string msg)
 	return write(i->second, msg.c_str(), msg.size());
 }
 
+int TCPServer::Send(int sck, string msg)
+{
+	SCKINFO::iterator i = _sckinfo.find(sck);
+	if ( i == _sckinfo.end()) return -1;
+
+	return write(sck, msg.c_str(), msg.size());
+}
+
 int TCPServer::Recv(string ip, string& msg)
 {
 	SCKMAP::iterator i = _sckmap.find(ip);
@@ -135,4 +142,13 @@ int TCPServer::Recv(string ip, string& msg)
 
 	msg.reserve(_bufSz+1);
 	return read(i->second, (char*)&(*msg.begin()), _bufSz);
+}
+
+int TCPServer::Recv(int sck, string& msg)
+{
+	SCKINFO::iterator i = _sckinfo.find(sck);
+	if ( i == _sckinfo.end()) return -1;
+
+	msg.reserve(_bufSz+1);
+	return read(sck, (char*)&(*msg.begin()), _bufSz);
 }

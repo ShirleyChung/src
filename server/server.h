@@ -6,23 +6,36 @@
 #include "../classes/tcpserver.h"
 #include <thread>
 
+struct SessionInfo
+{
+	int sck;
+	string ip;
+	bool run;
+	thread thd;
+
+	SessionInfo():run(true){};
+	void ShowInfo(){
+		cout<<"socket:"<<sck<<"\n\tIP:"<<ip<<"\n\trunning:"<<run<<'\n';
+	}
+};
+
 class Server: public FuncDisp<Server>, public TCPServer
 {
 protected:
-	typedef map<string, thread> THRDMAP;
+	typedef map<int, SessionInfo> SIMAP;
 
-	THRDMAP _thrdmap;
-
-	bool _getstr;
+	SIMAP _simap;
 
 	void ServerStart(STRARR& cmd);
 	void ServerStop(STRARR& cmd);
+	void StopSession(STRARR& cmd);
+	void DispSession(STRARR& cmd);
 	
 	static void thread_wait_connection(Server*);
-	static void thread_get_string(Server*, const string& ip);
+	static void thread_get_string(Server*, int sck);
 
 	thread _thd;
-	virtual void OnGetRemoteString(const string& ip, const string& msg);
+	virtual void OnGetRemoteString(int sck, const string& msg);
 
 public:
 	Server();
