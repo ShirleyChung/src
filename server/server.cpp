@@ -1,4 +1,5 @@
 #include "server.h"
+#include "../classes/tool.h"
 
 extern "C" IModule* GetModule()
 {
@@ -44,6 +45,7 @@ void Server::thread_get_string(Server* pThis, const string& ip)
 	{
 		string buf(sz, 0);
 		int n = read(pThis->_sckmap[ip], (char*)&(*buf.begin()), sz);
+		rtrim( buf, string(1,0) );
 		msg += buf;
 		if (n < sz)
 		{
@@ -68,5 +70,6 @@ void Server::OnConnect(string ip, int sck)
 
 void Server::OnGetRemoteString(const string& ip, const string& msg)
 {
-	cout<< ip << ":" << msg <<'\n';
+	cout<< ip << ":" << msg <<" len:"<< msg.size()<< '\n';
+	Invoke(msg);
 }

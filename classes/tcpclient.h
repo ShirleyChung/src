@@ -6,19 +6,25 @@
 #include <netinet/in.h>
 #include <string>
 #include <netdb.h>
+#include <map>
 
 using namespace std;
 
 class TCPClient
 {
-protected:
+protected:	
+	typedef map<string, int> SCKMAP;
+
+	SCKMAP _sckmap; 
+
 	int _bufSz;
-	int _clisck;
 public:
 	TCPClient();
 	virtual ~TCPClient();
 	bool Connect(string ip, int port);
 	bool Send(string msg);
+
+	void CloseAll();
 };
 
 #endif
