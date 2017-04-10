@@ -45,11 +45,7 @@ void Server::thread_get_string(Server* pThis, int sck)
 	do
 	{
 		string buf(sz, 0);
-<<<<<<< HEAD
 		int n = read(sck, (char*)&(*buf.begin()), sz);
-=======
-		int n = read(pThis->_sckmap[ip], (char*)&(*buf.begin()), sz);
->>>>>>> 0104eb1c5e53fa2a7714bb0c1c0bc79e83c0b2cc
 		rtrim( buf, string(1,0) );
 		msg += buf;
 		if (n < sz)
