@@ -10,10 +10,21 @@ TCPClient::TCPClient()
 TCPClient::~TCPClient()
 {
 	CloseAll();
+<<<<<<< HEAD
+=======
 }
 
 void TCPClient::CloseAll()
 {
+	for( SCKMAP::iterator i = _sckmap.begin(); i != _sckmap.end(); ++i )
+		close(i->second);
+	_sckmap.clear();
+>>>>>>> 0104eb1c5e53fa2a7714bb0c1c0bc79e83c0b2cc
+}
+
+void TCPClient::CloseAll()
+{
+<<<<<<< HEAD
 	for( SCKMAP::iterator i = _sckmap.begin(); i != _sckmap.end(); ++i )
 		close(i->second);
 	_sckmap.clear();
@@ -26,6 +37,12 @@ int TCPClient::Connect(string ip, int port)
 	int sck = socket(AF_INET, SOCK_STREAM, 0);
 
 	if (sck<0){ cout<<"socket init err!\n"; return sck;}
+=======
+	int sck = socket(AF_INET, SOCK_STREAM, 0);
+	_sckmap[ip] = sck;
+
+	if (sck<0){ cout<<"socket init err!\n"; return false;}
+>>>>>>> 0104eb1c5e53fa2a7714bb0c1c0bc79e83c0b2cc
 	in_addr ipv4addr;
 	sockaddr_in serv_addr;
 	serv_addr.sin_family = AF_INET;
