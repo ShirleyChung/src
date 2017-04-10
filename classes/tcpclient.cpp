@@ -92,7 +92,7 @@ bool TCPClient::Send(string ip, string msg)
 	if (i == _sckmap.end()) return false;
 
 	if ( 0 > write(i->second, msg.c_str(), msg.size()) )
-	{	
+	{
 		cout<<" write to "<< i->first <<" failed\n";
 		return false;
 	}
