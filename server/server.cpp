@@ -74,7 +74,11 @@ void Server::StopSession(STRARR& cmd)
 			pthread_cancel(_simap[sck].thd.native_handle());
 			_simap.erase(sck);
 		}
+		else
+			cout<<"socket["<<sck<<"] doesn't exist\n";
 	}
+	else
+		cout<<"stopses [sck]\n";
 }
 
 void Server::DispSession(STRARR& cmd)

@@ -7,6 +7,7 @@
 #include <string>
 #include <netdb.h>
 #include <map>
+#include <list>
 
 using namespace std;
 
@@ -15,9 +16,11 @@ class TCPClient
 protected:	
 	typedef map<string, int> SCKMAP;
 	typedef map<int, sockaddr_in> SCKINFO;
+	typedef map<string, list<addrinfo> > ADDRINFO;
 
 	SCKMAP _sckmap; 
 	SCKINFO _sckinfo;
+	ADDRINFO _addrinfo;
 
 	int _bufSz;
 public:
@@ -26,6 +29,8 @@ public:
 	int Connect(string ip, int port);
 	bool Send(int sck, string msg);
 	bool Send(string ip, string msg);
+
+	const list<addrinfo>& GetAddrInfo(string host, string port);
 
 	void CloseAll();
 	bool Close(string ip);

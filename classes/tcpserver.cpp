@@ -2,6 +2,7 @@
 #include <iostream>
 #include <memory.h>
 #include <arpa/inet.h>
+#include <fcntl.h>
 
 TCPServer::TCPServer()
 :_lsnNum(5)

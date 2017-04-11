@@ -98,3 +98,23 @@ bool TCPClient::Send(string ip, string msg)
 	}
 	return true;
 }
+
+
+const list<addrinfo>& TCPClient::GetAddrInfo(string host, string port)
+{
+	addrinfo hints, *res;
+
+	memset(&hints, 0, sizeof(addrinfo));
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
+	_addrinfo[host].clear();
+	if ( 0 != getaddrinfo( host.size()? host.c_str(): NULL, port.size()? port.c_str(): NULL, &hints, &res ) )
+		cout<<"Address info of "<<host<<" doesn't get.\n";
+
+	for( addrinfo *p = res; p; p = p->ai_next )
+		_addrinfo[host].push_back(*p)  ;
+
+	freeaddrinfo(res);
+
+	return _addrinfo[host];
+}
