@@ -14,10 +14,11 @@ TCPClient::~TCPClient()
 
 void TCPClient::CloseAll()
 {
-	for( SCKMAP::iterator i = _sckmap.begin(); i != _sckmap.end(); ++i )
-		close(i->second);
+	for( SCKINFO::iterator i = _sckinfo.begin(); i != _sckinfo.end(); ++i )
+		close(i->first);
+
 	_sckmap.clear();
-	_sckinfo.clear();
+	_addrinfo.clear();
 }
 
 int TCPClient::Connect(string ip, int port)
@@ -36,13 +37,15 @@ int TCPClient::Connect(string ip, int port)
 		cout<<" connect error!\n";
 		return -1;
 	}
-	_sckmap[ip] = sck;
+	_sckmap[ip].push_back(sck);
 	_sckinfo[sck] = serv_addr;
+
 	cout <<"ok.\n";
 
 	return sck;
 }
 
+/* 關閉連線socket  */
 bool TCPClient::Close(int sck)
 {
 	SCKINFO::iterator i = _sckinfo.find(sck);
@@ -50,24 +53,33 @@ bool TCPClient::Close(int sck)
 	{
 		Close(sck);
 		_sckinfo.erase(i);
-		for( SCKMAP::iterator s = _sckmap.begin(); s != _sckmap.end();)
-			if (s->second == sck){
-				_sckmap.erase(s); s = _sckmap.begin();
-			}
-			else ++s;
+		for( SCKMAP::iterator s = _sckmap.begin(); s != _sckmap.end(); ++s )
+			for(list<int>::iterator c = s->second.begin(); c != s->second.end(); ++c)
+				if (*c == sck){
+					s->second.erase(c);
+					if ( !s->second.size() )
+						_sckmap.erase(s);
+					break;
+				}
 		return true;
 	}
 	return false;
 }
 
+/* 關閉連線ip  */
 bool TCPClient::Close(string ip)
 {
 	SCKMAP::iterator i = _sckmap.find(ip);
 	if ( i != _sckmap.end() )
 	{
-		Close(i->second);
+		for(list<int>::iterator c = i->second.begin(); c != i->second.end(); ++c)
+		{
+			Close(*c);
+			_sckinfo.erase(*c);
+		}
+
 		_sckmap.erase(i);
-		_sckinfo.erase(i->second);
+		
 		return true;
 	}
 	return false;
@@ -76,7 +88,7 @@ bool TCPClient::Close(string ip)
 bool TCPClient::Send(int sck, string msg)
 {
 	SCKINFO::iterator i = _sckinfo.find(sck);
-	if (i == _sckinfo.end()) return false;
+	if (i == _sckinfo.end() || !CheckSocket(sck)) return false;
 
 	if ( 0 > write(sck, msg.c_str(), msg.size()) )
 	{
@@ -89,13 +101,26 @@ bool TCPClient::Send(int sck, string msg)
 bool TCPClient::Send(string ip, string msg)
 {
 	SCKMAP::iterator i = _sckmap.find(ip);
-	if (i == _sckmap.end()) return false;
 
-	if ( 0 > write(i->second, msg.c_str(), msg.size()) )
+	if (i == _sckmap.end()) 
+		return false;
+
+	for( list<int>::iterator c = i->second.begin(); c != i->second.end(); ++c )
+		if ( !CheckSocket(*c) ||  0 > write(*c, msg.c_str(), msg.size()) )
+			cout<<" write to "<< i->first <<" failed\n";
+	return true;
+}
+
+bool TCPClient::CheckSocket(int sck)
+{
+	pollfd fd = {sck, POLLOUT, 0};
+
+	if ( 0 >= poll(&fd, 1, 500) )
 	{
-		cout<<" write to "<< i->first <<" failed\n";
+		cout <<"socket ["<<sck<<"] is invalid.\n";
 		return false;
 	}
+
 	return true;
 }
 

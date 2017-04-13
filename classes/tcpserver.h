@@ -7,6 +7,7 @@
 #include <string>
 #include <unistd.h>
 #include <map>
+#include <sys/poll.h>
 
 using namespace std;
 
@@ -27,6 +28,10 @@ protected:
 	sockaddr_in _sckaddr;
 
 	void WaitForConnection();
+
+	bool ListenConnection();
+
+	bool PeekConnection();
 
 	void CloseSession(string ip);
 

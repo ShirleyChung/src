@@ -18,7 +18,8 @@ struct SessionInfo
 class Client: public FuncDisp<Client>, public TCPClient
 {
 protected:
-	list<SessionInfo> _sesInfo;	
+	typedef map<int, SessionInfo> SESINFO;
+	SESINFO _sesInfo;
 
 	void Connect(STRARR& cmd);
 	void ConnectLocal(STRARR& cmd);

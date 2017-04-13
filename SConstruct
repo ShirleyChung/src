@@ -13,3 +13,4 @@ server = SConscript( dirs='server', exports = 'env' )
 
 client = SConscript( dirs='client', exports = 'env' )
 
+chatroom = SConscript( dirs='chatroom', exports = 'env' )

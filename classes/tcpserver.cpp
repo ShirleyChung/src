@@ -4,6 +4,7 @@
 #include <arpa/inet.h>
 #include <fcntl.h>
 
+
 TCPServer::TCPServer()
 :_lsnNum(5)
 ,_bufSz(1024)
@@ -73,6 +74,7 @@ void TCPServer::Echo()
 	delete[] buf;
 }
 
+/* block waiting conection  */
 void TCPServer::WaitForConnection()
 {
 	listen(_svrsck, _lsnNum);
@@ -84,6 +86,9 @@ void TCPServer::WaitForConnection()
 
 	while(_do_wait)
 	{
+		pollfd fd = {_svrsck, POLLIN, 0};
+		if ( 0 >= poll(&fd, 1, 1000) ) continue;
+
 		int sck = accept(_svrsck, (sockaddr*)&cliaddr, &clilen);	
 		if (sck<0)
 			cout<<" accept failed!\n";
@@ -101,10 +106,104 @@ void TCPServer::WaitForConnection()
 	}
 }
 
+/* use select to implement non-blocking connection */
+bool TCPServer::ListenConnection()
+{
+	fd_set fds, fds_tmp;
+	timeval timeout={1,0};
+	int maxsck = _svrsck;
+	sockaddr_in cliaddr;
+	socklen_t addrlen;
+
+	FD_ZERO(&fds);
+	FD_ZERO(&fds_tmp);
+
+	FD_SET(_svrsck, &fds);
+	listen(_svrsck, _lsnNum);
+	cout<<"listening "<<_lsnNum<<"\n";
+	while(_do_wait)
+	{
+		fds_tmp = fds;
+
+		if ( 0 >= select(maxsck + 1, &fds_tmp/*read*/, NULL/*write*/, NULL/*except*/, &timeout/*timeout*/))
+			continue;
+
+		for(int sck = 0; sck <= maxsck; ++sck)
+		{
+			if (FD_ISSET(sck, &fds_tmp))
+			{
+				if (sck==_svrsck)
+				{
+					//new connection
+					int newsck = accept(_svrsck, (sockaddr*)&cliaddr, &addrlen);
+					FD_SET(newsck, &fds);
+					if (newsck > maxsck) 
+						maxsck = newsck;
+					cout<<"new client connected.\n";
+
+					string cip(INET_ADDRSTRLEN+1, 0);
+					inet_ntop(AF_INET, &cliaddr.sin_addr, (char*)&(*cip.begin()), INET_ADDRSTRLEN);
+					_sckmap[cip] = sck;
+					_sckinfo[sck] = cliaddr;
+				}
+				else
+				{
+					//data from client.
+					string buf(_bufSz, 0);
+					if ( recv(sck, (char*)&(*buf.begin()), _bufSz, 0) <=0 )
+					{
+						// client closed.
+						close(sck);
+						FD_CLR(sck, &fds);
+					}
+					else
+					{
+						string cip(INET_ADDRSTRLEN+1, 0);
+						inet_ntop(AF_INET, &_sckinfo[sck].sin_addr, (char*)&(*cip.begin()), INET_ADDRSTRLEN);
+						OnConnect(cip, sck);
+					}
+				}
+			}
+			else
+			{
+			}
+		}
+	}
+
+	return true;
+}
+
+bool TCPServer::PeekConnection()
+{
+	timeval timeout={1,0};
+	listen(_svrsck, _lsnNum);
+	
+	while(_do_wait)
+	{
+		pollfd pfd = {_svrsck, POLLIN, 0};
+		if ( poll(&pfd, 1, 1000) >0 )
+		{
+			sockaddr_in cliaddr;
+			socklen_t addrlen;
+			int sck = accept(_svrsck, (sockaddr*)&cliaddr, &addrlen);
+			cout<<"new client connected.\n";
+
+			string cip(INET_ADDRSTRLEN+1, 0);
+			inet_ntop(AF_INET, &cliaddr.sin_addr, (char*)&(*cip.begin()), INET_ADDRSTRLEN);
+			_sckmap[cip] = sck;
+			_sckinfo[sck] = cliaddr;
+			OnConnect(cip, sck);
+		}
+	}
+
+	return true;
+}
+
 void TCPServer::CloseSession(string ip)
 {
 	SCKMAP::iterator i = _sckmap.find(ip);
 	if (i != _sckmap.end() )
+
 	{
 		close(i->second);
 		_sckinfo.erase(i->second);

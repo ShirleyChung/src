@@ -28,6 +28,7 @@ void Server::ServerStart(STRARR& cmd)
 		cout<<"port "<<port<<" cannot be initialed.\n";
 	else
 	{
+		_do_wait = true;
 		_thd = thread(thread_wait_connection, this);
 		cout<<"Server started.\n";
 	}
@@ -36,6 +37,7 @@ void Server::ServerStart(STRARR& cmd)
 void Server::thread_wait_connection(Server* pThis)
 {
 	pThis->WaitForConnection();
+//	pThis->ListenConnection();
 }
 
 void Server::thread_get_string(Server* pThis, int sck)
@@ -44,6 +46,11 @@ void Server::thread_get_string(Server* pThis, int sck)
 	int sz = pThis->_bufSz;
 	do
 	{
+		pollfd fd = {sck, POLLIN, 0};
+
+		poll(&fd, 1, 1000);
+		if ( fd.revents & (POLLERR|POLLHUP|POLLNVAL) ) break; /* sck已失效  */
+
 		string buf(sz, 0);
 		int n = read(sck, (char*)&(*buf.begin()), sz);
 		rtrim( buf, string(1,0) );
@@ -56,10 +63,13 @@ void Server::thread_get_string(Server* pThis, int sck)
 	}
 	while(pThis->_simap[sck].run);
 	close(sck);
+	cout<<"server end getstring\n";
 }
 
 void Server::ServerStop(STRARR& cmd)
 {
+	_do_wait = false;
+	CloseAllSession();
 	cout<<"Server stoped.\n";
 }
 

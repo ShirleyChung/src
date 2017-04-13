@@ -8,27 +8,33 @@
 #include <netdb.h>
 #include <map>
 #include <list>
+#include <sys/poll.h>
 
 using namespace std;
 
 class TCPClient
 {
 protected:	
-	typedef map<string, int> SCKMAP;
-	typedef map<int, sockaddr_in> SCKINFO;
-	typedef map<string, list<addrinfo> > ADDRINFO;
+	typedef map<string, list<int> > SCKMAP; /* ip:sck  */
+	typedef map<int, sockaddr_in> SCKINFO;  /* sck, sckaddr */
 
 	SCKMAP _sckmap; 
 	SCKINFO _sckinfo;
-	ADDRINFO _addrinfo;
 
 	int _bufSz;
+
+protected:
+	typedef map<string, list<addrinfo> > ADDRINFO; /* sck, addr-list */
+	ADDRINFO _addrinfo;
+
 public:
 	TCPClient();
 	virtual ~TCPClient();
 	int Connect(string ip, int port);
 	bool Send(int sck, string msg);
 	bool Send(string ip, string msg);
+	
+	bool CheckSocket(int sck);
 
 	const list<addrinfo>& GetAddrInfo(string host, string port);
 

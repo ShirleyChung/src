@@ -27,7 +27,7 @@ void Client::Connect(STRARR& cmd)
 		si.port = atoi(cmd[1].c_str());
 		si.sck =TCPClient::Connect(si.ip, si.port);
 		if (si.sck >=0)
-			_sesInfo.push_back(si);
+			_sesInfo[si.sck] = si;
 	}
 	else
 		ConnectLocal(cmd);
@@ -35,8 +35,8 @@ void Client::Connect(STRARR& cmd)
 
 void Client::ConnectStatus(STRARR& cmd)
 {
-	for( list<SessionInfo>::iterator i = _sesInfo.begin(); i != _sesInfo.end(); ++i )
-		(*i).Show();
+	for( SESINFO::iterator i = _sesInfo.begin(); i != _sesInfo.end(); ++i )
+		i->second.Show();
 
 }
 
@@ -47,7 +47,7 @@ void Client::ConnectLocal(STRARR& cmd)
 	si.port = cmd.size()>0? atoi(cmd[0].c_str()): 5000;
 	si.sck = TCPClient::Connect(si.ip, si.port);
 	if (si.sck >=0)	
-		_sesInfo.push_back(si);
+		_sesInfo[si.sck] = si;
 }
 
 void Client::Send(STRARR& cmd)
