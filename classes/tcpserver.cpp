@@ -8,88 +8,71 @@
 TCPServer::TCPServer()
 :_lsnNum(5)
 ,_bufSz(1024)
-,_do_wait(true)
-,_svrsck(-1)
 {
 }
 
 TCPServer::~TCPServer()
 {
 	CloseAllSession();
-	if (_svrsck>=0) close(_svrsck);
+	list<ServerCfg>::iterator i = _serverCfg.begin();
+	for( ; i != _serverCfg.end(); ++i )
+		close((*i).sck);
+	_serverCfg.clear();
 }
 
 bool TCPServer::Init(int port)
 {
-	_port = port;
+	ServerCfg cfg;
+	cfg.port = port;
+	cfg.bwait = true;
+	cfg.lsnum = _lsnNum;
 	
 	memset(&_sckaddr, 0, sizeof(_sckaddr));
 
 	_sckaddr.sin_family = AF_INET;
 	_sckaddr.sin_addr.s_addr = INADDR_ANY;
-	_sckaddr.sin_port = htons(_port);
-
-	if (_svrsck>=0) close(_svrsck);
+	_sckaddr.sin_port = htons(cfg.port);
 	
-	_svrsck = socket(AF_INET, SOCK_STREAM, 0);
-	if (_svrsck <0)
+	cfg.sck = socket(AF_INET, SOCK_STREAM, 0);
+	if ( 0 > cfg.sck)
 	{
 		cout<<" socket open error!\n";
 		return false;
 	}
 	
-	if (0 != bind(_svrsck, (sockaddr*)&_sckaddr, sizeof(_sckaddr)))
+	if (0 > bind(cfg.sck, (sockaddr*)&_sckaddr, sizeof(_sckaddr)))
 	{	
-		cout<<"bind "<<_port<<" error.\n";
+		cout<<"bind "<<cfg.port<<" error.\n";
 		return false;
 	}
-	return true;
-}
-
-void TCPServer::Echo()
-{
-	listen(_svrsck, _lsnNum);
-	cout<<" listening port:"<<_port<<" ,socket:"<<_svrsck<<"\n";
-	sockaddr_in cliaddr;
-	socklen_t clilen = sizeof(sockaddr);
-	int newsck = accept(_svrsck, (sockaddr*)&cliaddr, &clilen);	
-	if (newsck<0) cout<<" accept failed!\n";
-	else
-		cout<<"Accepted.\n";
-
-	char* buf = new char[_bufSz];
-	string msg, ret = "I got it";
-	do
-	{
-		memset(buf, 0, _bufSz);
-		int n = read(newsck, buf, _bufSz);
-		msg = buf;
-		cout<<"msg="<<msg<<", sizeof msg="<<msg.size()<<'\n';
-		n = write(newsck, ret.c_str(), ret.size());
-	}while( msg != "ok");
 	
-	close(newsck);
-	cout<<" socket "<<newsck<<" closed.\n";
-
-	delete[] buf;
+	_serverCfg.push_back(cfg);
+	return true;
 }
 
 /* block waiting conection  */
 void TCPServer::WaitForConnection()
 {
-	listen(_svrsck, _lsnNum);
-	cout<<" listening port:"<<_port<<" ,socket:"<<_svrsck<<"\n";
+	if (!_serverCfg.size()) return;
+		
+	ServerCfg& cfg = _serverCfg.back();
+
+	if ( 0 > listen(cfg.sck, cfg.lsnum) )
+	{
+		cout<<"listen "<<cfg.sck<<", backlog:"<<cfg.lsnum<<" failed.\n";
+		return;
+	}
+	cout<<" listening port:"<<cfg.port<<" ,socket:"<<cfg.sck<<"\n";
 	sockaddr_in cliaddr;
 	socklen_t clilen = sizeof(sockaddr);
 
-	_sckmap.clear();
-
-	while(_do_wait)
+	while(cfg.bwait)
 	{
-		pollfd fd = {_svrsck, POLLIN, 0};
+		pollfd fd = {cfg.sck, POLLIN, 0};
 		if ( 0 >= poll(&fd, 1, 1000) ) continue;
 
-		int sck = accept(_svrsck, (sockaddr*)&cliaddr, &clilen);	
+		int sck = accept(cfg.sck, (sockaddr*)&cliaddr, &clilen);	
+		cout<<"accept: "<<sck<<"\n";
 		if (sck<0)
 			cout<<" accept failed!\n";
 		else
@@ -99,7 +82,8 @@ void TCPServer::WaitForConnection()
 
 			inet_ntop(AF_INET, &cliaddr.sin_addr, (char*)&(*cip.begin()), INET_ADDRSTRLEN);
 			_sckmap[cip] = sck;
-			_sckinfo[sck] = cliaddr;
+			_sckinfo[sck] = SocketInfo(cliaddr);
+			_sckinfo[sck].ip = cip;
 
 			OnConnect(cip, sck);
 		}
@@ -109,65 +93,41 @@ void TCPServer::WaitForConnection()
 /* use select to implement non-blocking connection */
 bool TCPServer::ListenConnection()
 {
-	fd_set fds, fds_tmp;
+	if (!_serverCfg.size()) return false;
+	
+	ServerCfg& cfg = _serverCfg.back();
+	
+	fd_set fds;
 	timeval timeout={1,0};
-	int maxsck = _svrsck;
+
 	sockaddr_in cliaddr;
 	socklen_t addrlen;
 
 	FD_ZERO(&fds);
-	FD_ZERO(&fds_tmp);
 
-	FD_SET(_svrsck, &fds);
-	listen(_svrsck, _lsnNum);
-	cout<<"listening "<<_lsnNum<<"\n";
-	while(_do_wait)
+	FD_SET(cfg.sck, &fds);
+	listen(cfg.sck, cfg.lsnum);
+	cout<<"listening "<<cfg.port<<"\n";
+	
+	while(cfg.bwait)
 	{
-		fds_tmp = fds;
-
-		if ( 0 >= select(maxsck + 1, &fds_tmp/*read*/, NULL/*write*/, NULL/*except*/, &timeout/*timeout*/))
+		if ( 0 >= select(cfg.sck + 1, &fds/*read*/, NULL/*write*/, NULL/*except*/, &timeout/*timeout*/))
 			continue;
 
-		for(int sck = 0; sck <= maxsck; ++sck)
-		{
-			if (FD_ISSET(sck, &fds_tmp))
+			if (FD_ISSET(cfg.sck, &fds))
 			{
-				if (sck==_svrsck)
-				{
 					//new connection
-					int newsck = accept(_svrsck, (sockaddr*)&cliaddr, &addrlen);
+					int newsck = accept(cfg.sck, (sockaddr*)&cliaddr, &addrlen);
 					FD_SET(newsck, &fds);
-					if (newsck > maxsck) 
-						maxsck = newsck;
 					cout<<"new client connected.\n";
 
 					string cip(INET_ADDRSTRLEN+1, 0);
 					inet_ntop(AF_INET, &cliaddr.sin_addr, (char*)&(*cip.begin()), INET_ADDRSTRLEN);
-					_sckmap[cip] = sck;
-					_sckinfo[sck] = cliaddr;
-				}
-				else
-				{
-					//data from client.
-					string buf(_bufSz, 0);
-					if ( recv(sck, (char*)&(*buf.begin()), _bufSz, 0) <=0 )
-					{
-						// client closed.
-						close(sck);
-						FD_CLR(sck, &fds);
-					}
-					else
-					{
-						string cip(INET_ADDRSTRLEN+1, 0);
-						inet_ntop(AF_INET, &_sckinfo[sck].sin_addr, (char*)&(*cip.begin()), INET_ADDRSTRLEN);
-						OnConnect(cip, sck);
-					}
-				}
+					_sckmap[cip] = newsck;
+					_sckinfo[newsck] = SocketInfo(cliaddr);
+					_sckinfo[newsck].ip = cip;
+					OnConnect(cip, newsck);	
 			}
-			else
-			{
-			}
-		}
 	}
 
 	return true;
@@ -175,23 +135,27 @@ bool TCPServer::ListenConnection()
 
 bool TCPServer::PeekConnection()
 {
-	timeval timeout={1,0};
-	listen(_svrsck, _lsnNum);
+	if (!_serverCfg.size()) return false;
+	ServerCfg& cfg = _serverCfg.back();
 	
-	while(_do_wait)
+	timeval timeout={1,0};
+	listen(cfg.sck, cfg.lsnum);
+	
+	while(cfg.bwait)
 	{
-		pollfd pfd = {_svrsck, POLLIN, 0};
+		pollfd pfd = {cfg.sck, POLLIN, 0};
 		if ( poll(&pfd, 1, 1000) >0 )
 		{
 			sockaddr_in cliaddr;
 			socklen_t addrlen;
-			int sck = accept(_svrsck, (sockaddr*)&cliaddr, &addrlen);
+			int sck = accept(cfg.sck, (sockaddr*)&cliaddr, &addrlen);
 			cout<<"new client connected.\n";
 
 			string cip(INET_ADDRSTRLEN+1, 0);
 			inet_ntop(AF_INET, &cliaddr.sin_addr, (char*)&(*cip.begin()), INET_ADDRSTRLEN);
 			_sckmap[cip] = sck;
-			_sckinfo[sck] = cliaddr;
+			_sckinfo[sck] = SocketInfo(cliaddr);
+			_sckinfo[sck].ip = cip;
 			OnConnect(cip, sck);
 		}
 	}
@@ -203,12 +167,22 @@ void TCPServer::CloseSession(string ip)
 {
 	SCKMAP::iterator i = _sckmap.find(ip);
 	if (i != _sckmap.end() )
-
 	{
 		close(i->second);
 		_sckinfo.erase(i->second);
 		_sckmap.erase(i);
 	}
+}
+
+void TCPServer::CloseSession(int sck)
+{
+	SCKINFO::iterator i = _sckinfo.find(sck);
+		if (i != _sckinfo.end())
+		{
+			close(sck);
+			_sckmap.erase(i->second.ip);
+			_sckinfo.erase(i);
+		}
 }
 
 void TCPServer::CloseAllSession()

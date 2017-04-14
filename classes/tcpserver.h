@@ -7,23 +7,40 @@
 #include <string>
 #include <unistd.h>
 #include <map>
+#include <list>
 #include <sys/poll.h>
 
 using namespace std;
+
+struct SocketInfo : sockaddr_in
+{
+	string ip;
+	SocketInfo(const sockaddr_in& saddr):sockaddr_in(saddr){};
+	SocketInfo(){};
+};
+
+struct ServerCfg{
+	int sck;
+	int port;
+	int lsnum;
+	bool bwait;
+	
+	ServerCfg():sck(-1), bwait(false){};
+	~ServerCfg(){}
+};
 
 class TCPServer{
 
 protected:
 	typedef map<string, int> SCKMAP;
-	typedef map<int , sockaddr_in> SCKINFO;
+	typedef map<int , SocketInfo> SCKINFO;
 	SCKMAP _sckmap;
 	SCKINFO _sckinfo;
 
-	int _port;
-	int _svrsck; //server socket
+	list<ServerCfg> _serverCfg; //server socket
+	
 	int _lsnNum; //listen numbers
 	size_t _bufSz; //recv buffer size
-	bool _do_wait; //wait for accept
 
 	sockaddr_in _sckaddr;
 
@@ -35,6 +52,8 @@ protected:
 
 	void CloseSession(string ip);
 
+	void CloseSession(int sck);
+
 	void CloseAllSession();
 
 	virtual void OnConnect(string ip, int sck) = 0;
@@ -44,8 +63,6 @@ public:
 	virtual ~TCPServer();
 
 	bool Init(int port);
-
-	void Echo();
 
 	int Send(string ip, string msg);
 	int Send(int sck, string msg);

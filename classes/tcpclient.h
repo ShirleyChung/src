@@ -12,14 +12,24 @@
 
 using namespace std;
 
+struct SessionInfo
+{
+	int sck;
+	string ip;
+	int port;
+	void Show();
+};
+
 class TCPClient
 {
 protected:	
 	typedef map<string, list<int> > SCKMAP; /* ip:sck  */
 	typedef map<int, sockaddr_in> SCKINFO;  /* sck, sckaddr */
+	typedef map<int, SessionInfo> SESINFO;
 
 	SCKMAP _sckmap; 
 	SCKINFO _sckinfo;
+	SESINFO _sesInfo;
 
 	int _bufSz;
 
@@ -31,6 +41,8 @@ public:
 	TCPClient();
 	virtual ~TCPClient();
 	int Connect(string ip, int port);
+	void ShowConnectStatus();
+
 	bool Send(int sck, string msg);
 	bool Send(string ip, string msg);
 	

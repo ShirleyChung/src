@@ -40,9 +40,18 @@ int TCPClient::Connect(string ip, int port)
 	_sckmap[ip].push_back(sck);
 	_sckinfo[sck] = serv_addr;
 
+	SessionInfo si = {sck, ip, port};
+	_sesInfo[sck] = si;
+
 	cout <<"ok.\n";
 
 	return sck;
+}
+
+void TCPClient::ShowConnectStatus()
+{
+	for( SESINFO::iterator i = _sesInfo.begin(); i != _sesInfo.end(); ++i )
+		i->second.Show();
 }
 
 /* 關閉連線socket  */
@@ -51,8 +60,9 @@ bool TCPClient::Close(int sck)
 	SCKINFO::iterator i = _sckinfo.find(sck);
 	if ( i != _sckinfo.end() )
 	{
-		Close(sck);
+		close(sck);
 		_sckinfo.erase(i);
+		_sesInfo.erase(sck);
 		for( SCKMAP::iterator s = _sckmap.begin(); s != _sckmap.end(); ++s )
 			for(list<int>::iterator c = s->second.begin(); c != s->second.end(); ++c)
 				if (*c == sck){
@@ -103,11 +113,14 @@ bool TCPClient::Send(string ip, string msg)
 	SCKMAP::iterator i = _sckmap.find(ip);
 
 	if (i == _sckmap.end()) 
+	{
+		cout << "socket for "<<ip<<" not found.\n";
 		return false;
-
+	}
+	cout <<"send to ,sck.size="<<i->second.size()<<"\n";
 	for( list<int>::iterator c = i->second.begin(); c != i->second.end(); ++c )
-		if ( !CheckSocket(*c) ||  0 > write(*c, msg.c_str(), msg.size()) )
-			cout<<" write to "<< i->first <<" failed\n";
+		if ( !CheckSocket(*c) ||  0 >= write(*c, msg.c_str(), msg.size()) )
+			cout<<" write to "<< ip <<" failed\n";
 	return true;
 }
 
@@ -118,12 +131,19 @@ bool TCPClient::CheckSocket(int sck)
 	if ( 0 >= poll(&fd, 1, 500) )
 	{
 		cout <<"socket ["<<sck<<"] is invalid.\n";
+		Close(sck);	
 		return false;
 	}
+	else if (fd.revents & (POLLERR|POLLHUP|POLLNVAL))
+	{
+		cout<<"socket error\n";
+		Close(sck);
+		return false;		
+	}
+	cout<<"CheckSocket ok.\n";
 
 	return true;
 }
-
 
 const list<addrinfo>& TCPClient::GetAddrInfo(string host, string port)
 {
@@ -143,3 +163,10 @@ const list<addrinfo>& TCPClient::GetAddrInfo(string host, string port)
 
 	return _addrinfo[host];
 }
+
+void SessionInfo::Show()
+{
+	cout<<"Session:"<<sck<<"\n";
+	cout<<"\tIP:"<<ip<<"\n\tPort:"<<port<<"\n";
+}
+

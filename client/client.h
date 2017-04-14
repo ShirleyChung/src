@@ -7,24 +7,16 @@
 #include <list>
 
 
-struct SessionInfo
-{
-	int sck;
-	string ip;
-	int port;
-	void Show();
-};
 
 class Client: public FuncDisp<Client>, public TCPClient
 {
 protected:
-	typedef map<int, SessionInfo> SESINFO;
-	SESINFO _sesInfo;
 
 	void Connect(STRARR& cmd);
 	void ConnectLocal(STRARR& cmd);
 	void ConnectStatus(STRARR& cmd);
 	void Send(STRARR& cmd);
+	void Close(STRARR& cmd);
 
 public:
 	Client();

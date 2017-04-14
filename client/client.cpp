@@ -14,6 +14,7 @@ Client::Client()
 	AddFunc("connectlocal", &Client::ConnectLocal);
 	AddFunc("cstatus", &Client::ConnectStatus);
 	AddFunc("send", &Client::Send);
+	AddFunc("closeconnect", &Client::Close);
 }
 
 Client::~Client(){}
@@ -22,12 +23,7 @@ void Client::Connect(STRARR& cmd)
 {
 	if (cmd.size()>1)
 	{
-		SessionInfo si;
-		si.ip = cmd[0];
-		si.port = atoi(cmd[1].c_str());
-		si.sck =TCPClient::Connect(si.ip, si.port);
-		if (si.sck >=0)
-			_sesInfo[si.sck] = si;
+		TCPClient::Connect(cmd[0], atoi( cmd[1].c_str() ));
 	}
 	else
 		ConnectLocal(cmd);
@@ -35,19 +31,13 @@ void Client::Connect(STRARR& cmd)
 
 void Client::ConnectStatus(STRARR& cmd)
 {
-	for( SESINFO::iterator i = _sesInfo.begin(); i != _sesInfo.end(); ++i )
-		i->second.Show();
-
+	TCPClient::ShowConnectStatus();
 }
 
 void Client::ConnectLocal(STRARR& cmd)
 {
-	SessionInfo si;
-	si.ip = "127.0.0.1";
-	si.port = cmd.size()>0? atoi(cmd[0].c_str()): 5000;
-	si.sck = TCPClient::Connect(si.ip, si.port);
-	if (si.sck >=0)	
-		_sesInfo[si.sck] = si;
+	int port = cmd.size()>0? atoi(cmd[0].c_str()): 5000;
+	TCPClient::Connect("127.0.0.1", port);
 }
 
 void Client::Send(STRARR& cmd)
@@ -58,8 +48,13 @@ void Client::Send(STRARR& cmd)
 		TCPClient::Send("127.0.0.1", Tokencombine(cmd));
 }
 
-void SessionInfo::Show()
+void Client::Close(STRARR& cmd)
 {
-	cout<<"Session:"<<sck<<"\n";
-	cout<<"\tIP:"<<ip<<"\n\tPort:"<<port<<"\n";
+	if (cmd.size())
+	{
+		int sck = atoi(cmd[0].c_str());
+		TCPClient::Close(sck);
+	}
+	else
+		cout <<"closeconnect [socketid]\n";
 }

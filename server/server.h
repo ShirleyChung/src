@@ -14,6 +14,7 @@ struct SessionInfo
 	thread thd;
 
 	SessionInfo():run(true){};
+
 	void ShowInfo(){
 		cout<<"socket:"<<sck<<"\n\tIP:"<<ip<<"\n\trunning:"<<run<<'\n';
 	}
@@ -41,6 +42,8 @@ public:
 	Server();
 	virtual ~Server();
 	virtual string GetModuleDesc(){ return "tcp server"; }
+
+	void CloseSession(int sck);
 
 	// tcpserver
 	virtual void OnConnect(string ip, int sck);

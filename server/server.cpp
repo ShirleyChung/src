@@ -28,7 +28,6 @@ void Server::ServerStart(STRARR& cmd)
 		cout<<"port "<<port<<" cannot be initialed.\n";
 	else
 	{
-		_do_wait = true;
 		_thd = thread(thread_wait_connection, this);
 		cout<<"Server started.\n";
 	}
@@ -44,15 +43,16 @@ void Server::thread_get_string(Server* pThis, int sck)
 {
 	string msg;
 	int sz = pThis->_bufSz;
-	do
+	cout<<"beRun:"<<pThis->_simap[sck].run<<'\n';
+	while(pThis->_simap[sck].run)
 	{
 		pollfd fd = {sck, POLLIN, 0};
-
-		poll(&fd, 1, 1000);
-		if ( fd.revents & (POLLERR|POLLHUP|POLLNVAL) ) break; /* sck已失效  */
+		if ( 0 >= poll(&fd, 1, 1000) ) continue;
+		if (fd.revents & (POLLERR|POLLHUP|POLLNVAL)) break;
 
 		string buf(sz, 0);
 		int n = read(sck, (char*)&(*buf.begin()), sz);
+		if (!n) break;
 		rtrim( buf, string(1,0) );
 		msg += buf;
 		if (n < sz)
@@ -61,15 +61,14 @@ void Server::thread_get_string(Server* pThis, int sck)
 			msg.clear();
 		}
 	}
-	while(pThis->_simap[sck].run);
-	close(sck);
+	pThis->CloseSession(sck);
 	cout<<"server end getstring\n";
 }
 
 void Server::ServerStop(STRARR& cmd)
 {
-	_do_wait = false;
 	CloseAllSession();
+	_serverCfg.pop_back();
 	cout<<"Server stoped.\n";
 }
 
@@ -78,17 +77,16 @@ void Server::StopSession(STRARR& cmd)
 	if (cmd.size()>0)
 	{
 		int sck = atoi(cmd[0].c_str());
-		if (_simap.find(sck) != _simap.end())
-		{
-			_simap[sck].run = false;
-			pthread_cancel(_simap[sck].thd.native_handle());
-			_simap.erase(sck);
-		}
-		else
-			cout<<"socket["<<sck<<"] doesn't exist\n";
+		CloseSession(sck);
 	}
 	else
 		cout<<"stopses [sck]\n";
+}
+
+void Server::CloseSession(int sck)	
+{
+	TCPServer::CloseSession(sck);
+	_simap.erase(sck);	
 }
 
 void Server::DispSession(STRARR& cmd)
@@ -103,6 +101,7 @@ void Server::OnConnect(string ip, int sck)
 	
 	_simap[sck].sck = sck;
 	_simap[sck].ip = ip;
+	_simap[sck].run = true;	
 	_simap[sck].thd = thread(thread_get_string, this, sck);
 }
 
