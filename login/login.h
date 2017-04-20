@@ -9,6 +9,8 @@ class Login:public FuncDisp<Login>
 public:
 	Login();
 	virtual ~Login();
+	
+	string GetModuleDesc(){ return "Login Module"; }
 };
 
 #endif

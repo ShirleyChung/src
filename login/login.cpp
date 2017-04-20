@@ -7,7 +7,7 @@ extern "C" IModule* GetModule()
 
 Login::Login()
 {
-
+	_name = "Login";
 }
 
 Login::~Login()

@@ -4,11 +4,13 @@
 #include "../classes/funcdisp.hpp"
 #include "../classes/singleton.hpp"
 
-class Mud:public FuncDisp<Login>
+class Mud:public FuncDisp<Mud>
 {
 public:
 	Mud();
 	virtual ~Mud();
+
+	string GetModuleDesc(){ return "MUD Module"; }
 };
 
 #endif

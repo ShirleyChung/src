@@ -8,7 +8,7 @@ extern "C" IModule* GetModule()
 
 Mud::Mud()
 {
-
+	_name = "MUD";
 }
 
 Mud::~Mud()
