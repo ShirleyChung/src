@@ -48,8 +48,6 @@ protected:
 
 	bool ListenConnection();
 
-	bool PeekConnection();
-
 	void CloseSession(string ip);
 
 	void CloseSession(int sck);

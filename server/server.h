@@ -4,14 +4,15 @@
 #include "../classes/funcdisp.hpp"
 #include "../classes/singleton.hpp"
 #include "../classes/tcpserver.h"
-#include <thread>
+#include <pthread.h>
 
 struct SessionInfo
 {
 	int sck;
 	string ip;
 	bool run;
-	thread thd;
+	pthread_t thd;
+	void* pt;
 
 	SessionInfo():run(true){};
 
@@ -23,7 +24,7 @@ struct SessionInfo
 class Server: public FuncDisp<Server>, public TCPServer
 {
 protected:
-	typedef map<int, SessionInfo> SIMAP;
+	typedef map<int, SessionInfo*> SIMAP;
 
 	SIMAP _simap;
 
@@ -32,10 +33,10 @@ protected:
 	void StopSession(STRARR& cmd);
 	void DispSession(STRARR& cmd);
 	
-	static void thread_wait_connection(Server*);
-	static void thread_get_string(Server*, int sck);
+	static void* thread_wait_connection(void*);
+	static void* thread_get_string(void*);
 
-	thread _thd;
+	pthread_t _thd;
 	virtual void OnGetRemoteString(int sck, const string& msg);
 
 public:

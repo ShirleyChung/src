@@ -63,7 +63,8 @@ bool TCPClient::Close(int sck)
 		close(sck);
 		_sckinfo.erase(i);
 		_sesInfo.erase(sck);
-		for( SCKMAP::iterator s = _sckmap.begin(); s != _sckmap.end(); ++s )
+		
+/*		for( SCKMAP::iterator s = _sckmap.begin(); s != _sckmap.end(); ++s )
 			for(list<int>::iterator c = s->second.begin(); c != s->second.end(); ++c)
 				if (*c == sck){
 					s->second.erase(c);
@@ -71,6 +72,8 @@ bool TCPClient::Close(int sck)
 						_sckmap.erase(s);
 					break;
 				}
+*/	
+			
 		return true;
 	}
 	return false;
@@ -117,7 +120,7 @@ bool TCPClient::Send(string ip, string msg)
 		cout << "socket for "<<ip<<" not found.\n";
 		return false;
 	}
-	cout <<"send to ,sck.size="<<i->second.size()<<"\n";
+
 	for( list<int>::iterator c = i->second.begin(); c != i->second.end(); ++c )
 		if ( !CheckSocket(*c) ||  0 >= write(*c, msg.c_str(), msg.size()) )
 			cout<<" write to "<< ip <<" failed\n";
@@ -140,7 +143,6 @@ bool TCPClient::CheckSocket(int sck)
 		Close(sck);
 		return false;		
 	}
-	cout<<"CheckSocket ok.\n";
 
 	return true;
 }

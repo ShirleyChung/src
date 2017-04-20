@@ -1,0 +1,5 @@
+
+cd out
+system
+cd ..
+

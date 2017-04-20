@@ -25,7 +25,9 @@ vector<string> Tokenize(const string& str)
 
 string& rtrim(string& s, const string& sep)
 {
+	if (!s.size()) return s;
 	s.erase( s.find_last_not_of(sep)+1 );
+	return s;
 }
 
 string Tokencombine(const vector<string>& arr, const string& sep)

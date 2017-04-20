@@ -14,7 +14,7 @@ Client::Client()
 	AddFunc("connectlocal", &Client::ConnectLocal);
 	AddFunc("cstatus", &Client::ConnectStatus);
 	AddFunc("send", &Client::Send);
-	AddFunc("closeconnect", &Client::Close);
+	AddFunc("closec", &Client::Close);
 }
 
 Client::~Client(){}

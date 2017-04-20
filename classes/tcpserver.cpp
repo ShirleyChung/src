@@ -4,7 +4,6 @@
 #include <arpa/inet.h>
 #include <fcntl.h>
 
-
 TCPServer::TCPServer()
 :_lsnNum(5)
 ,_bufSz(1024)
@@ -97,7 +96,7 @@ bool TCPServer::ListenConnection()
 	
 	ServerCfg& cfg = _serverCfg.back();
 	
-	fd_set fds;
+	fd_set fds, fdstmp;
 	timeval timeout={1,0};
 
 	sockaddr_in cliaddr;
@@ -111,10 +110,11 @@ bool TCPServer::ListenConnection()
 	
 	while(cfg.bwait)
 	{
-		if ( 0 >= select(cfg.sck + 1, &fds/*read*/, NULL/*write*/, NULL/*except*/, &timeout/*timeout*/))
+		fdstmp = fds;
+		if ( 0 >= select(cfg.sck + 1, &fdstmp/*read*/, NULL/*write*/, NULL/*except*/, &timeout/*timeout*/))
 			continue;
 
-			if (FD_ISSET(cfg.sck, &fds))
+			if (FD_ISSET(cfg.sck, &fdstmp))
 			{
 					//new connection
 					int newsck = accept(cfg.sck, (sockaddr*)&cliaddr, &addrlen);
@@ -133,38 +133,9 @@ bool TCPServer::ListenConnection()
 	return true;
 }
 
-bool TCPServer::PeekConnection()
-{
-	if (!_serverCfg.size()) return false;
-	ServerCfg& cfg = _serverCfg.back();
-	
-	timeval timeout={1,0};
-	listen(cfg.sck, cfg.lsnum);
-	
-	while(cfg.bwait)
-	{
-		pollfd pfd = {cfg.sck, POLLIN, 0};
-		if ( poll(&pfd, 1, 1000) >0 )
-		{
-			sockaddr_in cliaddr;
-			socklen_t addrlen;
-			int sck = accept(cfg.sck, (sockaddr*)&cliaddr, &addrlen);
-			cout<<"new client connected.\n";
-
-			string cip(INET_ADDRSTRLEN+1, 0);
-			inet_ntop(AF_INET, &cliaddr.sin_addr, (char*)&(*cip.begin()), INET_ADDRSTRLEN);
-			_sckmap[cip] = sck;
-			_sckinfo[sck] = SocketInfo(cliaddr);
-			_sckinfo[sck].ip = cip;
-			OnConnect(cip, sck);
-		}
-	}
-
-	return true;
-}
-
 void TCPServer::CloseSession(string ip)
 {
+	cout<<"Close Session "<<ip;
 	SCKMAP::iterator i = _sckmap.find(ip);
 	if (i != _sckmap.end() )
 	{
@@ -172,10 +143,12 @@ void TCPServer::CloseSession(string ip)
 		_sckinfo.erase(i->second);
 		_sckmap.erase(i);
 	}
+	cout<<" closed.\n";
 }
 
 void TCPServer::CloseSession(int sck)
 {
+	cout<<"CloseSession sck "<<sck;
 	SCKINFO::iterator i = _sckinfo.find(sck);
 		if (i != _sckinfo.end())
 		{
@@ -183,6 +156,7 @@ void TCPServer::CloseSession(int sck)
 			_sckmap.erase(i->second.ip);
 			_sckinfo.erase(i);
 		}
+		cout<<" closed.\n";
 }
 
 void TCPServer::CloseAllSession()
