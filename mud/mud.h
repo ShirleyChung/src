@@ -4,6 +4,8 @@
 #include "../classes/funcdisp.hpp"
 #include "../classes/singleton.hpp"
 
+#include "world.h"
+
 class Mud:public FuncDisp<Mud>
 {
 public:

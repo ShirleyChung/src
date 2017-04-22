@@ -1,7 +1,7 @@
 #include "configfile.h"
+#include "tool.h"
 #include <iostream>
 #include <sys/types.h>
-#include <sys/stat.h>
 #include <unistd.h>
 
 using namespace std;
@@ -65,13 +65,4 @@ void ConfigFile::Del(const string& key)
 	STRMAP::iterator itor = _cfg_map.find(key);
 	if (itor != _cfg_map.end())
 		_cfg_map.erase(itor);
-}
-
-void ConfigFile::CheckDirExist(string fn)
-{
-	size_t pos = fn.rfind('/');
-	if ( pos != string::npos)
-	{
-		mkdir( fn.substr(0, pos).c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
-	}
 }

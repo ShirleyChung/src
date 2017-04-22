@@ -1,5 +1,6 @@
 #include "tool.h"
 #include <algorithm>
+#include <sys/stat.h>
 
 vector<string> Tokenize(const string& line, const string& sep)
 {
@@ -42,4 +43,13 @@ string Tokencombine(const vector<string>& arr, const string& sep)
 string Tokencombine(const vector<string>& arr)
 {
 	return Tokencombine(arr, " ");
+}
+
+void CheckDirExist(string fn)
+{
+	size_t pos = fn.rfind('/');
+	if ( pos != string::npos)
+	{
+		mkdir( fn.substr(0, pos).c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
+	}
 }

@@ -1,6 +1,6 @@
 #include "talker.h"
 #include <stdlib.h>
-#include <chrono>
+#include <unistd.h>
 
 extern "C" IModule* GetModule()
 {
@@ -8,8 +8,7 @@ extern "C" IModule* GetModule()
 }
 
 Talker::Talker()
-:_thd(thread_proc, this)
-,_run(true)
+:_run(true)
 {
 	_name = "talker";
 	AddFunc("hello", &Talker::Hello);
@@ -25,12 +24,14 @@ void Talker::Hello(STRARR& cmd)
 	cout<< "Hi!\n";
 }
 
-void Talker::thread_proc(Talker* pthis)
+void* Talker::thread_proc(void* pt)
 {
+	Talker* pthis = (Talker*)pt;
 	while(pthis->_run)
 	{
 		cout<<"hello!"<<rand()<<" \n";
 		int wait = 500 + rand()%5000;
-		this_thread::sleep_for(std::chrono::milliseconds(wait));
+		usleep(wait);
 	}
+	return pt;
 }

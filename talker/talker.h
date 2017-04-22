@@ -3,12 +3,12 @@
 
 #include "../classes/funcdisp.hpp"
 #include "../classes/singleton.hpp"
-#include <thread>
+#include <pthread.h>
 
 class Talker: public FuncDisp<Talker>
 {
-	thread _thd;
-	static void thread_proc(Talker*);
+	pthread_t _thd;
+	static void* thread_proc(void*);
 
 	void Hello(STRARR&);
 	bool _run;
