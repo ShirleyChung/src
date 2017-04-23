@@ -6,13 +6,11 @@
 
 TCPServer::TCPServer()
 :_lsnNum(5)
-,_bufSz(1024)
 {
 }
 
 TCPServer::~TCPServer()
 {
-	CloseAllSession();
 	list<ServerCfg>::iterator i = _serverCfg.begin();
 	for( ; i != _serverCfg.end(); ++i )
 		close((*i).sck);
@@ -134,72 +132,4 @@ bool TCPServer::ListenConnection()
 	}
 
 	return true;
-}
-
-void TCPServer::CloseSession(string ip)
-{
-	cout<<"Close Session "<<ip;
-	SCKMAP::iterator i = _sckmap.find(ip);
-	if (i != _sckmap.end() )
-	{
-		close(i->second);
-		_sckinfo.erase(i->second);
-		_sckmap.erase(i);
-	}
-	cout<<" closed.\n";
-}
-
-void TCPServer::CloseSession(int sck)
-{
-	cout<<"CloseSession sck "<<sck;
-	SCKINFO::iterator i = _sckinfo.find(sck);
-		if (i != _sckinfo.end())
-		{
-			close(sck);
-			_sckmap.erase(i->second.ip);
-			_sckinfo.erase(i);
-		}
-		cout<<" closed.\n";
-}
-
-void TCPServer::CloseAllSession()
-{
-	for( SCKMAP::iterator itor = _sckmap.begin(); itor != _sckmap.end(); ++itor )
-		close(itor->second);
-	_sckmap.clear();
-	_sckinfo.clear();
-}
-
-int TCPServer::Send(string ip, string msg)
-{
-	SCKMAP::iterator i = _sckmap.find(ip);
-	if ( i == _sckmap.end()) return -1;
-
-	return write(i->second, msg.c_str(), msg.size());
-}
-
-int TCPServer::Send(int sck, string msg)
-{
-	SCKINFO::iterator i = _sckinfo.find(sck);
-	if ( i == _sckinfo.end()) return -1;
-
-	return write(sck, msg.c_str(), msg.size());
-}
-
-int TCPServer::Recv(string ip, string& msg)
-{
-	SCKMAP::iterator i = _sckmap.find(ip);
-	if ( i == _sckmap.end()) return -1;
-
-	msg.reserve(_bufSz+1);
-	return read(i->second, (char*)&(*msg.begin()), _bufSz);
-}
-
-int TCPServer::Recv(int sck, string& msg)
-{
-	SCKINFO::iterator i = _sckinfo.find(sck);
-	if ( i == _sckinfo.end()) return -1;
-
-	msg.reserve(_bufSz+1);
-	return read(sck, (char*)&(*msg.begin()), _bufSz);
 }

@@ -5,25 +5,46 @@
 
 typedef void* (*THREADPROC)(void*);
 
-template<class T>
 class Thread{
 
-	pthread_t _threadhandle;
-	
+	pthread_t _handle;
+	pthread_attr_t _attr;
+
 	static void* thread_proc(void* pt){
-		T* pThis = (T*)pt;
+		Thread* pThis = (Thread*)pt;
 		pThis->run();
+		pThis->_handle = 0;
+		pthread_exit(NULL);
 	};
-	
+
 	THREADPROC _thdprc;
 	
-public:
-	Thread():_thdprc(thread_proc){}
-	Thread(THREADPROC thdprc):_thdprc(thdprc){}
-		
-	virtual ~Thread();
+	void ThdInit(){
+		pthread_attr_init(&_attr);		
+	}
 	
-	void run();
+	void UnInit(){
+			pthread_attr_destroy(&_attr);	
+	}
+
+public:
+	Thread():_thdprc(thread_proc), _handle(0){
+		ThdInit();
+	}
+	Thread(THREADPROC thdprc):_thdprc(thdprc){
+		ThdInit();
+	}
+
+	virtual ~Thread(){
+		UnInit();
+	}
+	
+	void start(){
+		if (_handle) return;
+		pthread_create(&_handle, NULL, _thdprc, (void*)this);
+	}
+	
+	virtual void run(){};
 };
 
 #endif

@@ -8,12 +8,14 @@ extern "C" IModule* GetModule()
 }
 
 Server::Server()
+	:_run(true)
 {
 	_name = "server";
 	AddFunc("ss", &Server::ServerStart);
 	AddFunc("startserver", &Server::ServerStart);
 	AddFunc("stopserver", &Server::ServerStop);
 	AddFunc("closes", &Server::StopSession);
+	AddFunc("si", &Server::DispSession);
 	AddFunc("sesinfo", &Server::DispSession);
 }
 
@@ -34,54 +36,18 @@ void Server::ServerStart(STRARR& cmd)
 		cout<<"port "<<port<<" cannot be initialed.\n";
 	else
 	{
-		pthread_create( &_thd, NULL, thread_wait_connection, (void*)this);
+		start();
 		cout<<"Server started.\n";
 	}
 }
 
-void* Server::thread_wait_connection(void* pThis)
+void Server::run()
 {
-	((Server*)pThis)->WaitForConnection();
-//	pThis->ListenConnection();
-}
-
-void* Server::thread_get_string(void* pt)
-{
-	cout<<"=>thread get string start.\n ";
-	SessionInfo* pinfo = (SessionInfo*)pt;
-	string msg;
-	Server* pThis = (Server*)pinfo->pt;
-	int sz = pThis->_bufSz;
-	int sck = pinfo->sck;
-	
-	cout<<"beRun:"<<pinfo->run<<'\n';
-	while(pinfo->run)
-	{
-		pollfd fd = {sck, POLLIN, 0};
-		if ( 0 >= poll(&fd, 1, 1000) ) continue;
-		if (fd.revents & (POLLERR|POLLHUP|POLLNVAL)) break;
-		cout<<"reading "<<sck<<"...";
-		string buf(sz, 0);
-		int n = read(sck, (char*)&(*buf.begin()), sz); //blocked here..
-		if (!n) break;
-		cout<<" read.\n";
-		rtrim( buf, string(1,0) );
-		msg += buf;
-		cout<<"msg:"<<msg<<"\n";
-		if (n < sz)
-		{
-			pThis->OnGetRemoteString(sck, msg);
-			msg.clear();
-		}
-	}
-	cout<<"loop break;";
-	pThis->CloseSession(sck);
-	cout<<"=>thread get string end.\n";
+	TCPServer::WaitForConnection();
 }
 
 void Server::ServerStop(STRARR& cmd)
 {
-	CloseAllSession();
 	_serverCfg.pop_back();
 	cout<<"Server stoped.\n";
 }
@@ -91,15 +57,14 @@ void Server::StopSession(STRARR& cmd)
 	if (cmd.size()>0)
 	{
 		int sck = atoi(cmd[0].c_str());
-		CloseSession(sck);
+		DeleteSession(sck);
 	}
 	else
 		cout<<"stopses [sck]\n";
 }
 
-void Server::CloseSession(int sck)	
+void Server::DeleteSession(int sck)	
 {
-	TCPServer::CloseSession(sck);
 	SIMAP::iterator i = _simap.find(sck);
 	if (i != _simap.end())
 	{
@@ -116,21 +81,29 @@ void Server::DispSession(STRARR& cmd)
 
 void Server::OnConnect(string ip, int sck)
 {
-	cout << ip << " connected. \n";
+	cout << ip << " connected at ["<<sck<<"]\n";
 
-	SessionInfo* psi = new SessionInfo();
-	psi->sck = sck;
-	psi->ip = ip;
-	psi->run = true;	
-	psi->pt = (void*)this;
+	Session* psi = new Session(sck, ip, (void*)this);
+	psi->SetCallback(OnSessionCallback, (void*)this);
 	_simap[sck] = psi;
-	pthread_create( &psi->thd, NULL, thread_get_string, (void*)psi);
+	
+	psi->start();
 }
 
-void Server::OnGetRemoteString(int sck, const string& msg)
+void Server::OnSessionCallback(string msg, int sck, int signal, void* pt)
 {
-	cout<< "OnGetRemoteString["<<sck<<"]:"<< msg <<" len:"<< msg.size()<< '\n';
-	string rmsg = msg;
-	rtrim(rmsg, "\r\n");
-	Invoke(rmsg);
+	Server* pthis = (Server*)pt;
+	
+	cout<< "OnSessionCallback["<<sck<<"]:"<< msg << '\n';
+	switch(signal)
+	{
+		case Session::NEWMSG:
+			rtrim(msg, "\r\n");
+			pthis->Invoke(msg);
+			break;
+		case Session::ENDSES:
+			pthis->DeleteSession(sck);
+			break;
+			default:;
+	};
 }
