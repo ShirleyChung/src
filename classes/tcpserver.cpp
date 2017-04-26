@@ -82,8 +82,7 @@ void TCPServer::WaitForConnection()
 
 			inet_ntop(AF_INET, &cliaddr.sin_addr, (char*)&(*cip.begin()), INET_ADDRSTRLEN);
 			_sckmap[cip] = sck;
-			_sckinfo[sck] = SocketInfo(cliaddr);
-			_sckinfo[sck].ip = cip;
+			_sckinfo[sck] = SocketInfo(cliaddr, cip);
 
 			OnConnect(cip, sck);
 		}
@@ -125,8 +124,7 @@ bool TCPServer::ListenConnection()
 					string cip(INET_ADDRSTRLEN+1, 0);
 					inet_ntop(AF_INET, &cliaddr.sin_addr, (char*)&(*cip.begin()), INET_ADDRSTRLEN);
 					_sckmap[cip] = newsck;
-					_sckinfo[newsck] = SocketInfo(cliaddr);
-					_sckinfo[newsck].ip = cip;
+					_sckinfo[newsck] = SocketInfo(cliaddr, cip);
 					OnConnect(cip, newsck);	
 			}
 	}

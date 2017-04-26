@@ -16,6 +16,7 @@ class Man: public FuncDisp<Man>
 	
 public:
 	Man();
+
 	virtual string GetModuleDesc(){ return _desc; }
 };
 

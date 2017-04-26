@@ -2,3 +2,7 @@
 
 Item::Item()
 {}
+
+void Item::OnTimePass(time_t)
+{
+}

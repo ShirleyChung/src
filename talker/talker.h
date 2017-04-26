@@ -3,19 +3,33 @@
 
 #include "../classes/funcdisp.hpp"
 #include "../classes/singleton.hpp"
-#include <pthread.h>
+#include "../classes/thread.hpp"
+#include "../classes/configfile.h"
 
-class Talker: public FuncDisp<Talker>
+#include <vector>
+
+using namespace std;
+
+class Talker: public FuncDisp<Talker>, public Thread
 {
-	pthread_t _thd;
-	static void* thread_proc(void*);
-
-	void Hello(STRARR&);
 	bool _run;
+	vector<string> _words;
+	ConfigFile _conf;
+
+	void loadWords(const string& fn);
+
+	string say();
+	
+	void Hello(STRARR&);
+	void SetDict(STRARR&);
+	void StartThread(STRARR&);
+	void CloseThread(STRARR&);
 public:
 	Talker();
 	virtual ~Talker();
 	string GetModuleDesc(){ return "Talker v0.0.0.1"; }
+	
+	void run();
 };
 
 #endif

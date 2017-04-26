@@ -1,0 +1,13 @@
+Import( 'env' )
+
+VariantDir( 'build', '.', duplicate = 0 )
+
+envmapcreater = env.Clone(CXXFLAGS=['-pthread'])
+
+libmapcreater = envmapcreater.SharedLibrary( target = 'build/libmapcreater', 
+	source = [Glob('build/*.cpp')], 
+	LIBPATH = '#out',
+	LIBS = ['SC','pthread'])
+
+envmapcreater.Install( '#out', libmapcreater )
+envmapcreater.Alias( 'install', '#out' )

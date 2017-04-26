@@ -20,11 +20,11 @@ class Thread{
 	THREADPROC _thdprc;
 	
 	void ThdInit(){
-		pthread_attr_init(&_attr);		
+		pthread_attr_init(&_attr);
 	}
 	
 	void UnInit(){
-			pthread_attr_destroy(&_attr);	
+			pthread_attr_destroy(&_attr);
 	}
 
 public:
@@ -44,7 +44,17 @@ public:
 		pthread_create(&_handle, NULL, _thdprc, (void*)this);
 	}
 	
+	void stop(){
+		if (_handle)
+			pthread_cancel(_handle);
+		_handle = 0;
+	}
+	
 	virtual void run(){};
+	
+	void setcancelable(bool can){
+		pthread_setcancelstate(can? PTHREAD_CANCEL_ENABLE: PTHREAD_CANCEL_DISABLE, NULL);
+	}
 };
 
 #endif

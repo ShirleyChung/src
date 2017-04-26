@@ -1,6 +1,6 @@
 #include "server.h"
 #include "../classes/tool.h"
-#include <system_error>
+#include <stdlib.h>
 
 extern "C" IModule* GetModule()
 {
@@ -8,7 +8,8 @@ extern "C" IModule* GetModule()
 }
 
 Server::Server()
-	:_run(true)
+:_run(true)
+,_log("./logs/server.log")
 {
 	_name = "server";
 	AddFunc("ss", &Server::ServerStart);
@@ -38,6 +39,7 @@ void Server::ServerStart(STRARR& cmd)
 	{
 		start();
 		cout<<"Server started.\n";
+		_log<<"Server started.";
 	}
 }
 
@@ -49,6 +51,7 @@ void Server::run()
 void Server::ServerStop(STRARR& cmd)
 {
 	_serverCfg.pop_back();
+	stop();
 	cout<<"Server stoped.\n";
 }
 

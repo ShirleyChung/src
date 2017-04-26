@@ -16,7 +16,7 @@ using namespace std;
 struct SocketInfo : sockaddr_in
 {
 	string ip;
-	SocketInfo(const sockaddr_in& saddr):sockaddr_in(saddr){};
+	SocketInfo(const sockaddr_in& saddr, const string& ip):sockaddr_in(saddr), ip(ip){};
 	SocketInfo(){};
 };
 

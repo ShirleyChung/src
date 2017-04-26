@@ -4,7 +4,7 @@
 #define MAX_HISTORY 200
 
 Console::Console()
-:_conf("conf/console.cfg")
+:_conf("./conf/console.cfg")
 {
 	_prompt = _conf.GetValue(ckey);
 	if (!_prompt.size()) _prompt = '>';

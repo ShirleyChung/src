@@ -15,6 +15,7 @@ ConfigFile::~ConfigFile()
 }
 
 ConfigFile::ConfigFile(const string& fn)
+:_fn(fn)
 {
 	Load(fn);
 }
@@ -23,6 +24,8 @@ ConfigFile::ConfigFile(const string& fn)
 bool ConfigFile::Load(const string& fn)
 {
 	if (!fn.size()) return false;
+	
+	CheckFileExist(fn);
 
 	cout<<"reading "<<fn<<" ..";
 

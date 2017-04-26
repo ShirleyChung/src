@@ -4,12 +4,15 @@
 #include "../classes/funcdisp.hpp"
 #include "../classes/singleton.hpp"
 #include "../classes/tcpserver.h"
+#include "../classes/logfile.h"
 
 #include "session.h"
 
 class Server: public FuncDisp<Server>, public TCPServer, public Thread
 {
 	bool _run;
+	LogFile _log;
+	
 protected:
 	typedef map<int, Session*> SIMAP;
 

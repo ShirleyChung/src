@@ -1,0 +1,13 @@
+Import( 'env' )
+
+VariantDir( 'build', '.', duplicate = 0 )
+
+envconui = env.Clone(CXXFLAGS=['-pthread'])
+
+libconui = envconui.SharedLibrary( target = 'build/libconsoleui', 
+	source = [Glob('build/*.cpp')], 
+	LIBPATH = '#out',
+	LIBS = ['SC','pthread'])
+
+envconui.Install( '#out', libconui )
+envconui.Alias( 'install', '#out' )

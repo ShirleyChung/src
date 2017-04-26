@@ -25,6 +25,8 @@ public:
 
 	void Save(const string& fn);
 	void Save(){ Save(_fn); }
+	
+	string& operator[](const string& key) { return _cfg_map[key]; }
 };
 
 #endif
