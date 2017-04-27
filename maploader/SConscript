@@ -1,0 +1,13 @@
+Import( 'env' )
+
+VariantDir( 'build', '.', duplicate = 0 )
+
+envmaploader = env.Clone(CXXFLAGS=['-pthread'])
+
+libmaploader = envmaploader.SharedLibrary( target = 'build/libmaploader', 
+	source = [Glob('build/*.cpp')], 
+	LIBPATH = '#out',
+	LIBS = ['SC','pthread'])
+
+envmaploader.Install( '#out', libmaploader )
+envmaploader.Alias( 'install', '#out' )

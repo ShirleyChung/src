@@ -4,7 +4,7 @@
 #include "../classes/thread.hpp"
 #include "../classes/configfile.h"
 #include "../classes/tool.h"
-#include "object.h"
+#include "../h/mapdata.h"
 
 class World : public Thread
 {
