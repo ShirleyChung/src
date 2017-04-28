@@ -2,7 +2,7 @@ Import( 'env' )
 
 VariantDir( 'build', '.', duplicate = 0 )
 
-envchatrm = env.Clone(CXXFLAGS=['-pthread'], CPPPATH=['#classes', '#h'])
+envchatrm = env.Clone(CXXFLAGS=['-pthread'])
 
 libchatrm = envchatrm.SharedLibrary( target = 'build/libchatroom', 
 	source = [Glob('build/chatroom.cpp')], 

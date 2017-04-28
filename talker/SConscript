@@ -2,7 +2,7 @@ Import( 'env' )
 
 VariantDir( 'build', '.', duplicate = 0 )
 
-envtalker = env.Clone(CXXFLAGS=['-pthread'], CPPPATH=['#classes', '#h'])
+envtalker = env.Clone(CXXFLAGS=['-pthread'])
 
 libtalker = envtalker.SharedLibrary( target = 'build/libtalker', 
 	source = [Glob('build/*.cpp')], 

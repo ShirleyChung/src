@@ -1,5 +1,7 @@
 env = Environment() 
 
+env.Append(CPPPATH=['#classes','#h'])
+
 #common library
 sc = SConscript( dirs = 'classes', exports = 'env' )
 
@@ -14,7 +16,5 @@ server = SConscript( dirs='server', exports = 'env' )
 client = SConscript( dirs='client', exports = 'env' )
 
 #MUDs
-chatroom = SConscript( dirs='chatroom', exports = 'env' )
-login = SConscript( dirs='login', exports = 'env' )
-mud = SConscript( dirs='mud', exports = 'env' )
-conui = SConscript( dirs='conui', exports = 'env' )
+muds = SConscript( dirs=['chatroom', 'login', 'mud', 'conui'], exports = 'env' )
+

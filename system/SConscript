@@ -2,7 +2,7 @@ Import( 'env','sc' )
 
 VariantDir( 'build', '.', duplicate = 0 )
 
-envSystem = env.Clone(CXXFLAGS='-g', LINKFLAGS = '-ldl -g', CPPPATH=['#classes', '#h'])
+envSystem = env.Clone(CXXFLAGS='-g', LINKFLAGS = '-ldl -g')
 
 system = envSystem.Program(
 	target = 'build/system', 
