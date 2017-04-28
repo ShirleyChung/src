@@ -1,5 +1,5 @@
 #include "server.h"
-#include "../classes/tool.h"
+#include "tool.h"
 #include <stdlib.h>
 
 extern "C" IModule* GetModule()

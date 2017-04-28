@@ -13,7 +13,7 @@ string Tokencombine(const vector<string>&, const string& sep);
 
 string& rtrim(string& s, const string& sep);
 
-void CheckDirExist(const string& fn);
-void CheckFileExist(const string& fn);
+bool CheckDirExist(const string& fn);
+bool CheckFileExist(const string& fn);
 
 #endif

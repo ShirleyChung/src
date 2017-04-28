@@ -1,6 +1,6 @@
 Import( 'env' )
 
-envclient = env.Clone()
+envclient = env.Clone(CPPPATH=['../classes', '../h'])
 
 envclient.VariantDir( 'build', ['.'], duplicate = 0 )
 

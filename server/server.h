@@ -1,10 +1,10 @@
 #ifndef _tcpserver_module_for_listening_request_support_icommodule_2017
 #define _tcpserver_module_for_listening_request_support_icommodule_2017
 
-#include "../classes/funcdisp.hpp"
-#include "../classes/singleton.hpp"
-#include "../classes/tcpserver.h"
-#include "../classes/logfile.h"
+#include "funcdisp.hpp"
+#include "singleton.hpp"
+#include "tcpserver.h"
+#include "logfile.h"
 
 #include "session.h"
 

@@ -1,10 +1,10 @@
 #ifndef _world_clas_for_mud_game_world_information_and_map_2017_04
 #define _world_clas_for_mud_game_world_information_and_map_2017_04
 
-#include "../classes/thread.hpp"
-#include "../classes/configfile.h"
-#include "../classes/tool.h"
-#include "../h/mapdata.h"
+#include "thread.hpp"
+#include "configfile.h"
+#include "tool.h"
+#include "mapdata.h"
 
 class World : public Thread
 {

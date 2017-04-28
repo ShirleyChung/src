@@ -1,5 +1,5 @@
 #include "system.h"
-#include "../classes/tool.h"
+#include "tool.h"
 
 System sys;
 

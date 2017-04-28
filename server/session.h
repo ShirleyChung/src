@@ -7,8 +7,8 @@
 #include <string>
 #include <iostream>
 
-#include "../classes/thread.hpp"
-#include "../classes/tool.h"
+#include "thread.hpp"
+#include "tool.h"
 
 using namespace std;
 

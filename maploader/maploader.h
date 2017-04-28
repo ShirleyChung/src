@@ -1,9 +1,9 @@
 #ifndef _map_loader_for_loading_map_data_to_mud__201704
 #define _map_loader_for_loading_map_data_to_mud__201704
 
-#include "../classes/funcdisp.hpp"
-#include "../classes/singleton.hpp"
-#include "../h/mapdata.h"
+#include "funcdisp.hpp"
+#include "singleton.hpp"
+#include "mapdata.h"
 
 class MapLoader: public FuncDisp<MapLoader>
 {

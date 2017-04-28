@@ -1,5 +1,5 @@
 #include "man.h"
-#include "../classes/tool.h"
+#include "tool.h"
 #include <iostream>
 
 extern "C" IModule* GetModule()

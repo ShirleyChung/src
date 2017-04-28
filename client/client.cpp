@@ -1,6 +1,6 @@
 #include "client.h"
 #include <stdlib.h>
-#include "../classes/tool.h"
+#include "tool.h"
 
 extern "C" IModule* GetModule()
 {

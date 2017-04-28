@@ -46,21 +46,30 @@ string Tokencombine(const vector<string>& arr)
 	return Tokencombine(arr, " ");
 }
 
-void CheckDirExist(const string& fn)
+bool CheckDirExist(const string& fn)
 {
+	if (!fn.size()) return false;
+	
+	int st = false;
 	size_t pos = fn.rfind('/');
 	if ( pos != string::npos)
-	{
-		mkdir( fn.substr(0, pos).c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
-	}
+		st = mkdir( fn.substr(0, pos).c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
+	else
+		st = mkdir( fn.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
+	
+	return st != 0; // st == 0 means dir does not exist before
 }
 
-void CheckFileExist(const string& fn)
+bool CheckFileExist(const string& fn)
 {
+	bool exist = true;
+	CheckDirExist(fn);
 	FILE* fp = fopen(fn.c_str(), "r");
 	if (!fp)
 	{	
 		fp = fopen(fn.c_str(), "w");
+		exist = false;
 	}
 	fclose(fp);
+	return exist;
 }

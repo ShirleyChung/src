@@ -1,13 +1,28 @@
 #ifndef _map_Createer_for_Create_map_and_area_and_items_to_mud_data_201704
 #define _map_Createer_for_Create_map_and_area_and_items_to_mud_data_201704
 
-#include "../classes/funcdisp.hpp"
-#include "../classes/singleton.hpp"
-#include "../h/mapdata.h"
+#include "funcdisp.hpp"
+#include "singleton.hpp"
+#include "mapdata.h"
+
+#define MAPDATA "/MAPDATA"
+#define AREADATA "/AREADATA"
 
 class MapCreater: public FuncDisp<MapCreater>
-{
+{	
 	string _working_dir;
+	
+	void NewMap(STRARR& cmd);
+	void NewArea(STRARR& cmd);
+	
+	void ModifyMap(STRARR& cmd);
+	void ModifyArea(STRARR& cmd);
+	
+	void DeleteMap(STRARR& cmd);
+	void DeleteArea(STRARR& cmd);
+	
+	bool CreateFile(const string& fn);
+	
 public:
 	MapCreater();
 	virtual ~MapCreater();

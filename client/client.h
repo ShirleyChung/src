@@ -1,9 +1,9 @@
 #ifndef _tcpclient_module_for_listening_request_support_icommodule_2017
 #define _tcpclient_module_for_listening_request_support_icommodule_2017
 
-#include "../classes/funcdisp.hpp"
-#include "../classes/tcpclient.h"
-#include "../classes/singleton.hpp"
+#include "funcdisp.hpp"
+#include "tcpclient.h"
+#include "singleton.hpp"
 #include <list>
 
 

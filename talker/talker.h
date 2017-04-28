@@ -1,10 +1,10 @@
 #ifndef _talker_for_funny_chat_using_pthread_2017
 #define _talker_for_funny_chat_using_pthread_2017
 
-#include "../classes/funcdisp.hpp"
-#include "../classes/singleton.hpp"
-#include "../classes/thread.hpp"
-#include "../classes/configfile.h"
+#include "funcdisp.hpp"
+#include "singleton.hpp"
+#include "thread.hpp"
+#include "configfile.h"
 
 #include <vector>
 

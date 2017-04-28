@@ -2,7 +2,7 @@ Import( 'env' )
 
 VariantDir( 'build', '.', duplicate = 0 )
 
-envmud = env.Clone(CXXFLAGS=['-pthread'])
+envmud = env.Clone(CXXFLAGS=['-pthread'], CPPPATH=['../classes', '../h'])
 
 libmud = envmud.SharedLibrary( target = 'build/libmud', 
 	source = [Glob('build/*.cpp')], 

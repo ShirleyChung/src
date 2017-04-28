@@ -1,8 +1,8 @@
 #ifndef _manual_help_2017_module
 #define _manual_help_2017_module
 
-#include "../classes/funcdisp.hpp"
-#include "../classes/singleton.hpp"
+#include "funcdisp.hpp"
+#include "singleton.hpp"
 
 using namespace std;
 
