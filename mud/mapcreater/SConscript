@@ -2,7 +2,7 @@ Import( 'env' )
 
 VariantDir( 'build', '.', duplicate = 0 )
 
-envmapcreater = env.Clone(CXXFLAGS=['-pthread'], CPPPATH=['../classes', '../h'])
+envmapcreater = env.Clone(CXXFLAGS=['-pthread'], CPPPATH=['#classes', '#h'])
 
 libmapcreater = envmapcreater.SharedLibrary( target = 'build/libmapcreater', 
 	source = [Glob('build/*.cpp')], 

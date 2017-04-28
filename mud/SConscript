@@ -1,8 +1,8 @@
 Import( 'env' )
 
-VariantDir( 'build', '.', duplicate = 0 )
+VariantDir( 'build', 'src', duplicate = 0 )
 
-envmud = env.Clone(CXXFLAGS=['-pthread'], CPPPATH=['../classes', '../h'])
+envmud = env.Clone(CXXFLAGS=['-pthread'], CPPPATH=['#classes', '#h'])
 
 libmud = envmud.SharedLibrary( target = 'build/libmud', 
 	source = [Glob('build/*.cpp')], 
@@ -11,3 +11,8 @@ libmud = envmud.SharedLibrary( target = 'build/libmud',
 
 envmud.Install( '#out', libmud )
 envmud.Alias( 'install', '#out' )
+
+#craft tools
+mapcreater = SConscript( dirs='mapcreater', exports = 'env' )
+maploader = SConscript( dirs='maploader', exports = 'env' )
+chcreater = SConscript( dirs='charcreater', exports = 'env' )

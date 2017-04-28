@@ -8,6 +8,7 @@
 
 class Mud:public FuncDisp<Mud>
 {
+	Loader _ldr;
 public:
 	Mud();
 	virtual ~Mud();

@@ -2,7 +2,7 @@ Import( 'env' )
 
 VariantDir( 'build', '.', duplicate = 0 )
 
-envchcreater = env.Clone(CXXFLAGS=['-pthread'], CPPPATH=['../classes', '../h'])
+envchcreater = env.Clone(CXXFLAGS=['-pthread'], CPPPATH=['#classes', '#h'])
 
 libchcreater = envchcreater.SharedLibrary( target = 'build/libchcreater', 
 	source = [Glob('build/*.cpp')], 

@@ -2,7 +2,7 @@ Import( 'env' )
 
 VariantDir( 'build', '.', duplicate = 0 )
 
-envserver = env.Clone(CXXFLAGS=['-pthread'], CPPPATH=['../classes', '../h'])
+envserver = env.Clone(CXXFLAGS=['-pthread'], CPPPATH=['#classes', '#h'])
 
 libserver = envserver.SharedLibrary( target = 'build/libserver', 
 	source = [Glob('build/*.cpp')], 
