@@ -12,6 +12,9 @@ protected:
 
 public:
 	ChatRoom();
+	virtual ~ChatRoom(){};
+	
+	void run(){ Server::run(); }
 	
 	virtual void OnConnect(string ip, int sck){};
 };
