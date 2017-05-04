@@ -8,11 +8,16 @@
 class MapLoader: public FuncDisp<MapLoader>
 {
 	string _working_dir;
+
+	void LoadMap(STRARR& cmd);
+	void SetWordDir(STRARR& cmd);
+
 public:
 	MapLoader();
 	virtual ~MapLoader();
-	
+
 	virtual string GetModuleDesc(){ return "Map Loader v0.0.0.1";}
+
 };
 
 #endif

@@ -12,18 +12,31 @@ MapCreater::MapCreater()
 {
 	_name = "mapcreater";
 	CheckDirExist(_working_dir);
-	
+
 	AddFunc("newmap", &MapCreater::NewMap);
 	AddFunc("newarea", &MapCreater::NewArea);
 	AddFunc("mfmap", &MapCreater::ModifyMap);
 	AddFunc("mfarea", &MapCreater::ModifyArea);
 	AddFunc("delmap", &MapCreater::DeleteMap);
 	AddFunc("delarea", &MapCreater::DeleteArea);
+	AddFunc("setwkdir", &MapCreater::SetWordDir);
 }
 
 MapCreater::~MapCreater()
 {
 
+}
+
+void MapCreater::SetWordDir(STRARR& cmd)
+{
+	if ( !cmd.size() )
+		cout<<"please specify working dir: setwkdir [working dir]\n";
+	else
+	{
+		cout<<"previous working dir:<< _working_dir;
+		_working_dir = cmd[0];
+		cout<<"\nnew working dir:<< _working_dir <<"\n";
+	}
 }
 
 void MapCreater::NewMap(STRARR& cmd)
@@ -41,7 +54,7 @@ void MapCreater::NewMap(STRARR& cmd)
 	else
 		cout<<"newmap (mapname) [desc]\n";
 }
-	
+
 void MapCreater::NewArea(STRARR& cmd)
 {
 	if (cmd.size()>1)

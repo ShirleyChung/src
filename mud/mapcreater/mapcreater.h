@@ -9,24 +9,26 @@
 #define AREADATA "/AREADATA"
 
 class MapCreater: public FuncDisp<MapCreater>
-{	
+{
 	string _working_dir;
-	
+
 	void NewMap(STRARR& cmd);
 	void NewArea(STRARR& cmd);
-	
+
 	void ModifyMap(STRARR& cmd);
 	void ModifyArea(STRARR& cmd);
-	
+
 	void DeleteMap(STRARR& cmd);
 	void DeleteArea(STRARR& cmd);
-	
+
 	bool CreateFile(const string& fn);
-	
+
+	void SetWordDir(STRARR& cmd);
+
 public:
 	MapCreater();
 	virtual ~MapCreater();
-	
+
 	virtual string GetModuleDesc(){ return "Map Creater v0.0.0.1";}
 };
 
