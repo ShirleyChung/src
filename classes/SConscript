@@ -5,6 +5,8 @@ envSC = env.Clone()
 envSC.VariantDir( 'build', '.', duplicate = 0 )
 
 SC = envSC.SharedLibrary( target = 'build/libSC', source = [Glob('build/*.cpp')] )
+inc = Glob('*.h')
+envSC.Install( '#include',inc )
 
 envSC.Install( '#out', SC )
 envSC.Alias( 'install', '#out' )

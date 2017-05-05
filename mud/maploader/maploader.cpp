@@ -37,9 +37,9 @@ void MapLoader::SetWordDir(STRARR& cmd)
 		cout<<"please specify working dir: setwkdir [working dir]\n";
 	else
 	{
-		cout<<"previous working dir:<< _working_dir;
+		cout<<"previous working dir:"<< _working_dir;
 		_working_dir = cmd[0];
-		cout<<"\nnew working dir:<< _working_dir <<"\n";
+		cout<<"\nnew working dir:"<< _working_dir <<"\n";
 	}
 }
 
