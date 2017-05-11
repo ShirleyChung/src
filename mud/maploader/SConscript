@@ -1,8 +1,8 @@
-Import( 'env' )
+Import( 'envmud' )
 
 VariantDir( 'build', '.', duplicate = 0 )
 
-envmaploader = env.Clone(CXXFLAGS=['-pthread'])
+envmaploader = envmud.Clone(CXXFLAGS=['-pthread'])
 
 libmaploader = envmaploader.SharedLibrary( target = 'build/libmaploader', 
 	source = [Glob('build/*.cpp')], 

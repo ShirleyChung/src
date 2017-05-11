@@ -44,11 +44,14 @@ void MapCreater::NewMap(STRARR& cmd)
 	if (cmd.size()>0)
 	{
 		CheckDirExist(cmd[0]);
-		string mdfn = _working_dir + "/" + cmd[0] + MAPDATA;
-		ConfigFile conf(mdfn);
+		
+		string mappath = _working_dir + "/" + cmd[0];
+		ConfigFile conf(mappath + MAPDATA);
 		conf.Add("name", cmd[0]);
+		
 		if (cmd.size()>1)
 			conf.Add("desc", cmd[1]);
+			
 		cout<<"Map ["<<cmd[0]<<"] created\n";
 	}
 	else
@@ -61,8 +64,14 @@ void MapCreater::NewArea(STRARR& cmd)
 	{
 		if(!CheckDirExist)
 			NewMap(STRARR(cmd.begin(), cmd.begin()+1));
-		string adfn = _working_dir + "/" + cmd[0] + "/" + cmd[1] + AREADATA;
-		CheckFileExist(adfn);
+			
+		string mappath = _working_dir + "/" + cmd[0];
+		ConfigFile mapdata(mappath + MAPDATA);
+		mapdata.Add(string("area_") + cmd[1], cmd[1]);
+		
+		string areapath = mappath + "/" + cmd[1];
+		CheckFileExist(areapath + AREADATA);
+		
 		cout<<"Area ["<<cmd[1]<<"] created in ["<<cmd[0]<<"]\n";
 	}
 	else

@@ -1,5 +1,6 @@
 #include "maploader.h"
 #include "tool.h"
+#include "configfile.h"
 
 extern "C" IModule* GetModule()
 {
@@ -27,9 +28,23 @@ void MapLoader::LoadMap(STRARR& cmd)
 		cout<<"please specify map name: ldmap [mapname]\n";
 	else
 	{
-
+		string mappath = _working_dir + "/" + cmd[0];
+		ConfigFile mapdata(mappath + MAPDATA);
+		for( STRMAP::const_iterator i = mapdata.GetConfig().begin(); i != mapdata.GetConfig().end(); ++i )
+			if (i->first != "name" && i->first != "desc")
+				_world[i->second] = LoadArea( mappath + "/" + i->second);
 	}
 }
+
+Area MapLoader::LoadArea(string areapath)
+{
+	ConfigFile areadata(areapath + AREADATA);
+	Area area;
+	area.name = areadata.GetValue("name");
+	area.desc = areadata.GetValue("desc");
+	return area;
+}
+
 
 void MapLoader::SetWordDir(STRARR& cmd)
 {

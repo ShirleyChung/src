@@ -5,9 +5,6 @@
 #include "singleton.hpp"
 #include "mapdata.h"
 
-#define MAPDATA "/MAPDATA"
-#define AREADATA "/AREADATA"
-
 class MapCreater: public FuncDisp<MapCreater>
 {
 	string _working_dir;

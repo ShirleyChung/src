@@ -13,6 +13,6 @@ envmud.Install( '#out', libmud )
 envmud.Alias( 'install', '#out' )
 
 #craft tools
-mapcreater = SConscript( dirs='mapcreater', exports = 'env' )
-maploader = SConscript( dirs='maploader', exports = 'env' )
-chcreater = SConscript( dirs='charcreater', exports = 'env' )
+mapcreater = SConscript( dirs='mapcreater', exports = 'envmud' )
+maploader = SConscript( dirs='maploader', exports = 'envmud' )
+chcreater = SConscript( dirs='charcreater', exports = 'envmud' )

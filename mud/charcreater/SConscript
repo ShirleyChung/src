@@ -1,8 +1,8 @@
-Import( 'env' )
+Import( 'envmud' )
 
 VariantDir( 'build', '.', duplicate = 0 )
 
-envchcreater = env.Clone(CXXFLAGS=['-pthread'])
+envchcreater = envmud.Clone(CXXFLAGS=['-pthread'])
 
 libchcreater = envchcreater.SharedLibrary( target = 'build/libchcreater', 
 	source = [Glob('build/*.cpp')], 

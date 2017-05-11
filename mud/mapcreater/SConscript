@@ -1,8 +1,8 @@
-Import( 'env' )
+Import( 'envmud' )
 
 VariantDir( 'build', '.', duplicate = 0 )
 
-envmapcreater = env.Clone(CXXFLAGS=['-pthread'])
+envmapcreater = envmud.Clone(CXXFLAGS=['-pthread'])
 
 libmapcreater = envmapcreater.SharedLibrary( target = 'build/libmapcreater', 
 	source = [Glob('build/*.cpp')], 
