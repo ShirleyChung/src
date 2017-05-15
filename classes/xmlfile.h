@@ -22,14 +22,18 @@ string GetToken(const string& str, const string& SEP, size_t spos, size_t epos);
 
 class XMLNode{
 	STRMAP _attributes;
-	list<XMLNode*> _firstChild;
+	list<XMLNode*> _childs;
 	string _content;
 
-	XMLNode* _curNode;
+	void _ParseTag(const string& tagcontent);
+
 public:
 	XMLNode();
 	XMLNode(const string& tag);
 	~XMLNode();
+	
+	bool hasChild(){ return false; }
+	void AddChild(XMLNode* node){ _childs.push_back(node); }
 	
 };
 
@@ -41,10 +45,11 @@ class XMLTree{
 	string _stack;
 	
 	XMLNode _root;
-	bool _DoParse(string& buf);
+	XMLNode* _DoParse(XMLNode* parent, const string& buf, int& cpos);
 
-	XMLNode* _ParseNextNode(const string& buf, int& cpos);
-
+	XMLNode* _FindTag(const string& buf, int& cpos);
+	
+	void _destruct(XMLNode*);
 public:
 	XMLTree(string& buf);
 	XMLTree(const string& fn);
