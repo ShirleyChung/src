@@ -13,14 +13,19 @@ namespace xmlfile
 typedef map<string, string> STRMAP;
 const string LAB = "<";
 const string RAB = ">";
+const string RABE = "/>";
 const string LCMT= "<!==";
 const string RCMT= "-->";
+const string SEP=" ";
+
+string GetToken(const string& str, const string& SEP, size_t spos, size_t epos);
 
 class XMLNode{
 	STRMAP _attributes;
-	list<XMLNode> _firstChild;
-	list<XMLNode> _firstSibling;
+	list<XMLNode*> _firstChild;
 	string _content;
+
+	XMLNode* _curNode;
 public:
 	XMLNode();
 	XMLNode(const string& tag);
@@ -33,11 +38,20 @@ class XMLTree{
 	
 	string& _xmlbuf;
 	string _tmpxmlbuf;
+	string _stack;
+	
 	XMLNode _root;
+	bool _DoParse(string& buf);
+
+	XMLNode* _ParseNextNode(const string& buf, int& cpos);
+
 public:
 	XMLTree(string& buf);
 	XMLTree(const string& fn);
 	~XMLTree();
+	
+	bool Read(const string& fn);
+	bool Save();
 };
 
 };
