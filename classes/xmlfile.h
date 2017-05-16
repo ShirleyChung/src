@@ -18,6 +18,7 @@ const string ERAB = "/>";
 const string LCMT= "<!--";
 const string RCMT= "-->";
 const string SEP=" ";
+const string TOK="=";
 
 string GetToken(const string& str, const string& SEP, size_t spos, size_t epos);
 
@@ -37,7 +38,7 @@ public:
 	void delChild();
 
 	bool hasChild, hasContent;
-	string content;
+	string tag, content;
 };
 
 class XMLTree{
@@ -51,7 +52,7 @@ class XMLTree{
 	XMLNode* _DoParse(XMLNode* parent, const string& buf, int& cpos);
 
 	XMLNode* _FindTag(const string& buf, int& cpos);
-	size_t _FindEndTag(const string& buf, int& cpos);
+	size_t _FindEndTag(const string& buf, int& cpos, const string& beginTag);
 public:
 	XMLTree(string& buf);
 	XMLTree(const string& fn);

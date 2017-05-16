@@ -34,9 +34,14 @@ void XMLNode::_ParseTag(const string& tc)
 			curpos = tc.find(SEP, pos);
 			string tok = (curpos == string::npos)? tc.substr(pos): tc.substr(pos, curpos - pos);
 
-//			if (tok.size())
-//				list.push_back( tok );
-
+			if (!tag.size())
+				tag = tok;
+			else if (tok.size())
+			{
+				size_t vpos = tok.find(TOK, 0);
+				if (vpos != string::npos)
+					_attributes[tok.substr(0, vpos)] = tok.substr(vpos + TOK.size());
+			}
 			pos = curpos + SEP.size();
 		}
 }
@@ -110,7 +115,7 @@ XMLNode* XMLTree::_DoParse(XMLNode* parent, const string& buf, int& cpos)
 				_DoParse(node, buf, cpos);
 				parent->AddChild(node);
 			}
-			else if (string::npos != (epos = _FindEndTag(buf, cpos)))
+			else if (string::npos != (epos = _FindEndTag(buf, cpos, node->tag)))
 			{
 				node->content = buf.substr(cpos, epos - cpos);
 				cpos = epos;
@@ -129,21 +134,22 @@ XMLNode* XMLTree::_FindTag(const string& buf, int& cpos)
 	cpos = buf.find(LAB, cpos);
 	if (cpos != string::npos) // found '<'
 	{
+		cpos += LAB.size();
 		size_t epos = buf.find(ERAB, cpos); // find '/>'
 		if (epos != string::npos) //no child, no content
 		{
-			XMLNode* node = new XMLNode( buf.substr( cpos + 1, epos - cpos ) );
-			cpos = epos + sizeof(ERAB);
+			XMLNode* node = new XMLNode( buf.substr( cpos, epos - cpos ) );
+			cpos = epos + ERAB.size();
 			return node;
 		}
 		else if ( string::npos != (epos = buf.find(RAB, cpos)) ) // find '>'
 		{
-			XMLNode* node = new XMLNode( buf.substr( cpos + 1, epos - cpos ) );
-			node->hasContent = (buf.find(ELAB, epos + 1) != string::npos);
-			cpos = epos + sizeof(RAB);
+			XMLNode* node = new XMLNode( buf.substr( cpos, epos - cpos ) );
+			cpos = epos + RAB.size();	// go next pos
+			node->hasContent = (buf.find(ELAB, cpos) != string::npos); // if next token is '</' that means it is a leaf
 			if (node->hasContent) return node;
 
-			node->hasChild = (buf.find(LAB, epos + 1) != string::npos);
+			node->hasChild = (buf.find(LAB, cpos) != string::npos); // it is not a leaf if next token is '<'
 			return node;
 		}
 	}
@@ -151,9 +157,20 @@ XMLNode* XMLTree::_FindTag(const string& buf, int& cpos)
 }
 
 /* 找出結尾的tag */
-size_t XMLTree::_FindEndTag(const string& buf, int& cpos)
+size_t XMLTree::_FindEndTag(const string& buf, int& cpos, const string& beginTag)
 {
 	size_t epos = buf.find(ELAB, cpos);
+	if (epos != string::npos)
+	{
+			cpos = epos + ELAB.size();
+			epos = buf.find(ERAB, cpos);
+			if (epos != string::npos)
+			{
+					if ( beginTag != buf.substr(cpos, epos - cpos) )
+						cout<<"tag:"<<beginTag<<" not match end.\n";
+					epos += ERAB.size();
+			}
+	}
 	return epos;
 }
 
