@@ -6,22 +6,22 @@
 */
 size_t StringParser::FindNextEmbrace(const string& lb, const string& rb, string& embrace, bool advCursor)
 {
-	size_t spos = _cpos;
-	for( ; spos < _buf.size(); ++spos )
-		if ( 0 == _buf.compare( spos, lb.size(), lb ) ) // found rb
+	size_t cpos = _cpos;
+	for( ; cpos < _buf.size(); ++cpos )
+		if ( 0 == _buf.compare( cpos, lb.size(), lb ) ) // found rb
 			break;
 	
-	spos += lb.size();
-	size_t epos = spos;
-	for( ; spos < _buf.size(); ++spos )
+	cpos += lb.size();
+	size_t spos = cpos; // save start pos to retrieve the embrace content
+	for( ; cpos < _buf.size(); ++cpos )
 	{
-			if ( 0 == _buf.compare( spos, rb.size(), rb ) )  // fonud rb
+			if ( 0 == _buf.compare( cpos, rb.size(), rb ) )  // fonud rb
 			{
-				embrace = _buf.substr(epos, spos - epos);
-				if (advCursor) _cpos = spos + rb.size();
-				return spos + rb.size();
+				embrace = _buf.substr(spos, cpos - spos);
+				if (advCursor) _cpos = cpos + rb.size();
+				return cpos + rb.size();
 			}
-			if ( 0 == _buf.compare( spos, lb.size(), lb ) ) // error.
+			if ( 0 == _buf.compare( cpos, lb.size(), lb ) ) // error.
 				return string::npos;
 	}
 		

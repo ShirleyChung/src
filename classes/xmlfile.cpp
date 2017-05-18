@@ -26,23 +26,22 @@ XMLNode::~XMLNode()
 /* 解析Tag的內容 */
 void XMLNode::_ParseTag(const string& tc)
 {
-	cout<<tc;
-		size_t pos = 0, curpos = 0;
-		while( curpos != string::npos)
-		{
-			curpos = tc.find(SEP, pos);
-			string tok = (curpos == string::npos)? tc.substr(pos): tc.substr(pos, curpos - pos);
+	size_t pos = 0, curpos = 0;
+	while( curpos != string::npos)
+	{
+		curpos = tc.find(SEP, pos);
+		string tok = (curpos == string::npos)? tc.substr(pos): tc.substr(pos, curpos - pos);
 
-			if (!_tag.size())
-				_tag = tok;
-			else if (tok.size())
-			{
-				size_t vpos = tok.find(TOK, 0);
-				if (vpos != string::npos)
-					_attributes[tok.substr(0, vpos)] = tok.substr(vpos + TOK.size());
-			}
-			pos = curpos + SEP.size();
+		if (!_tag.size())
+			_tag = tok;
+		else if (tok.size())
+		{
+			size_t vpos = tok.find(TOK, 0);
+			if (vpos != string::npos)
+				_attributes[tok.substr(0, vpos)] = tok.substr(vpos + TOK.size());
 		}
+		pos = curpos + SEP.size();
+	}
 }
 
 /* 清除所有子節點 */
@@ -59,12 +58,10 @@ void XMLNode::delChild()
 /* 印出節點資訊 */
 void XMLNode::ShowTree()
 {
-	cout<<_tag<<"\n";
+	cout<<_tag<<":("<<_childs.size()<<")\n";
 	for( list<XMLNode*>::iterator i = _childs.begin(); i != _childs.end(); ++i)
 		(*i)->ShowTree();
-	cout<<"end:"<<_tag<<"\n";
 }
-
 
 /* ＝＝＝XML Tree 類別=== */
 /* 直接從buf字串建立xml tree */
@@ -112,28 +109,27 @@ bool XMLTree::Read(const string& fn)
 /* 解析xml內文,搜尋sibling及child. */
 XMLNode* XMLTree::_DoParse(XMLNode* parent)
 {
-	size_t epos = _EndOfNode();
-	if (string::npos != epos)
-	{
-		parent->SetContent(_buf.substr(_cpos, epos));
-		return NULL;
-	}
 	string tag;
 	size_t nxpos = 0;
-	while(nxpos != string::npos)
+	while(nxpos != string::npos) // search sibling
 	{
-		size_t nxpos = FindNextEmbrace(LAB, RAB, tag, true);
-		if (string::npos != nxpos)
+		if (string::npos != (nxpos = _EndOfNode())) // find ENDTAG
 		{
-			XMLNode* node = new XMLNode(tag);
+			parent->SetContent(_buf.substr(_cpos, nxpos - _cpos));
+			return NULL;  //parent's ENDTAG
+		}
+		
+		if (string::npos != (nxpos = FindNextEmbrace(LAB, ERAB, tag, true))) // find SNGTAG
+		{
+			parent->AddChild(new XMLNode(tag));
+		}
+		else if (string::npos != (nxpos = FindNextEmbrace(LAB, RAB, tag, true))) // find BEGTAG
+		{
+			
+			XMLNode* node = new XMLNode(tag); cout<<"["<<tag<<"]";
 			parent->AddChild(node);
 			_DoParse(node);
-			nxpos = FindNextEmbrace(ELAB, RAB, tag, true);
-		}
-		else
-		{
-			if (string::npos != FindNextEmbrace(LAB, ERAB, tag, true))
-				parent->AddChild(new XMLNode(tag));
+			nxpos = FindNextEmbrace(ELAB, RAB, tag, true); // skip ENDTAG
 		}
 	};
 	return NULL;
