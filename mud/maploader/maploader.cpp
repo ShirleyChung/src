@@ -1,6 +1,7 @@
 #include "maploader.h"
 #include "tool.h"
 #include "configfile.h"
+#include "xmlfile.h"
 
 extern "C" IModule* GetModule()
 {
@@ -15,6 +16,8 @@ MapLoader::MapLoader()
 
 	AddFunc("ldmap", &MapLoader::LoadMap);
 	AddFunc("setwkdir", &MapLoader::SetWordDir);
+	AddFunc("ldxml", &MapLoader::LoadXML);
+		
 }
 
 MapLoader::~MapLoader()
@@ -56,5 +59,11 @@ void MapLoader::SetWordDir(STRARR& cmd)
 		_working_dir = cmd[0];
 		cout<<"\nnew working dir:"<< _working_dir <<"\n";
 	}
+}
+
+void MapLoader::LoadXML(STRARR& cmd)
+{
+	xmlfile::XMLTree xtree(cmd[0]);
+	xtree.ShowTree();
 }
 

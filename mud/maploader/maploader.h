@@ -11,6 +11,7 @@ class MapLoader: public FuncDisp<MapLoader>
 
 	void LoadMap(STRARR& cmd);
 	void SetWordDir(STRARR& cmd);
+	void LoadXML(STRARR& cmd);
 	
 	Area LoadArea(string area);
 	

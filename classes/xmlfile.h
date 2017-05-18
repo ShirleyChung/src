@@ -1,10 +1,10 @@
 #ifndef _xml_file_parse_xml_load_and_save_and_modify_201705_sly_
 #define _xml_file_parse_xml_load_and_save_and_modify_201705_sly_
 
-#include <string>
 #include <fstream>
 #include <map>
 #include <list>
+#include "stringparser.h"
 
 using namespace std;
 
@@ -19,12 +19,16 @@ const string LCMT= "<!--";
 const string RCMT= "-->";
 const string SEP=" ";
 const string TOK="=";
+const string ABS="</>";
 
 string GetToken(const string& str, const string& SEP, size_t spos, size_t epos);
 
 class XMLNode{
+protected:
 	STRMAP _attributes;
 	list<XMLNode*> _childs;
+
+	string _tag, _content;
 
 	void _ParseTag(const string& tagcontent);
 
@@ -34,25 +38,22 @@ public:
 	~XMLNode();
 
 	void AddChild(XMLNode* node){ _childs.push_back(node); }
-
 	void delChild();
+	void ShowTree();
 
-	bool hasChild, hasContent;
-	string tag, content;
+	void SetContent(const string& ct){ _content = ct; }
+	void SetTag(const string& tag){ _tag = tag; }
+	const string& GetTag(){ return _tag; }
 };
 
-class XMLTree{
+class XMLTree: private StringParser{
+protected:
 	string _savefn;
 
-	string& _xmlbuf;
-	string _tmpxmlbuf;
-	string _stack;
-
 	XMLNode _root;
-	XMLNode* _DoParse(XMLNode* parent, const string& buf, int& cpos);
-
-	XMLNode* _FindTag(const string& buf, int& cpos);
-	size_t _FindEndTag(const string& buf, int& cpos, const string& beginTag);
+	XMLNode* _DoParse(XMLNode* parent);
+	size_t _EndOfNode();
+	
 public:
 	XMLTree(string& buf);
 	XMLTree(const string& fn);
@@ -60,8 +61,9 @@ public:
 
 	bool Read(const string& fn);
 	bool Save();
+	void ShowTree();
 };
 
-};
+};//namespace
 
 #endif
