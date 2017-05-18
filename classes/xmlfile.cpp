@@ -58,10 +58,25 @@ void XMLNode::delChild()
 /* 印出節點資訊 */
 void XMLNode::ShowTree()
 {
-	cout<<_tag<<":("<<_childs.size()<<")\n";
+	cout<<_tag<<":("<<_childs.size()<<","<<_attributes.size()<<")"<<NL;
 	for( list<XMLNode*>::iterator i = _childs.begin(); i != _childs.end(); ++i)
 		(*i)->ShowTree();
 }
+
+string XMLNode::AsString()
+{
+	string ret = LAB;
+	ret += _tag;
+	for (STRMAP::iterator i=_attributes.begin(); i!= _attributes.end(); ++i)
+		ret += SEP + i->first + "=" + i->second;
+	ret += RAB + NL;
+
+	for( list<XMLNode*>::iterator i = _childs.begin(); i != _childs.end(); ++i)
+		ret += (*i)->AsString();
+	ret += ELAB + _tag + RAB + NL;
+	return ret;
+}
+
 
 /* ＝＝＝XML Tree 類別=== */
 /* 直接從buf字串建立xml tree */
@@ -73,7 +88,7 @@ XMLTree::XMLTree(string& buf)
 
 /* 讀取並解析xml文件建立xml tree */
 XMLTree::XMLTree(const string& fn)
-:_savefn(fn)
+:_savefn(fn), _root("root")
 {
 	Read(fn);
 
@@ -91,7 +106,7 @@ bool XMLTree::Read(const string& fn)
 {
 	ifstream ifs(fn.c_str());
 	if(!ifs){
-		cout<<"cannot read "<< fn <<"\n";
+		cout<<"cannot read "<< fn <<NL;
 		return false;
 	}
 
@@ -100,8 +115,6 @@ bool XMLTree::Read(const string& fn)
 
 	while(getline(ifs, line))
 		_buf += line;
-	
-	cout<<"_xmlbuf:"<<_buf<<"\n";
 
 	return true;
 }
@@ -125,8 +138,9 @@ XMLNode* XMLTree::_DoParse(XMLNode* parent)
 		}
 		else if (string::npos != (nxpos = FindNextEmbrace(LAB, RAB, tag, true))) // find BEGTAG
 		{
+			if (0 == tag.compare(0, LCMT.size(), LCMT)) continue; // it's a comment tag
 			
-			XMLNode* node = new XMLNode(tag); cout<<"["<<tag<<"]";
+			XMLNode* node = new XMLNode(tag);
 			parent->AddChild(node);
 			_DoParse(node);
 			nxpos = FindNextEmbrace(ELAB, RAB, tag, true); // skip ENDTAG
@@ -150,6 +164,7 @@ size_t XMLTree::_EndOfNode()
 
 void XMLTree::ShowTree()
 {
-	_root.ShowTree();
+	//_root.ShowTree();
+	cout<<_root.AsString();
 }
 

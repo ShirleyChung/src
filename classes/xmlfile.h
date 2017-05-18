@@ -15,11 +15,12 @@ const string LAB = "<";
 const string RAB = ">";
 const string ELAB = "</";
 const string ERAB = "/>";
-const string LCMT= "<!--";
+const string LCMT= "!--";
 const string RCMT= "-->";
 const string SEP=" ";
 const string TOK="=";
 const string ABS="</>";
+const string NL="\n";
 
 string GetToken(const string& str, const string& SEP, size_t spos, size_t epos);
 
@@ -37,6 +38,8 @@ public:
 	XMLNode(const string& tag);
 	~XMLNode();
 
+	string AsString();
+
 	void AddChild(XMLNode* node){ _childs.push_back(node); }
 	void delChild();
 	void ShowTree();
@@ -53,7 +56,7 @@ protected:
 	XMLNode _root;
 	XMLNode* _DoParse(XMLNode* parent);
 	size_t _EndOfNode();
-	
+
 public:
 	XMLTree(string& buf);
 	XMLTree(const string& fn);
