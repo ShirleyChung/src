@@ -62,7 +62,7 @@ void MapCreater::NewArea(STRARR& cmd)
 {
 	if (cmd.size()>1)
 	{
-		if(!CheckDirExist)
+		if(!CheckDirExist(cmd[0]))
 			NewMap(STRARR(cmd.begin(), cmd.begin()+1));
 			
 		string mappath = _working_dir + "/" + cmd[0];

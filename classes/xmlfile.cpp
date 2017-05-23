@@ -5,11 +5,6 @@
 using namespace xmlfile;
 
 
-string GetToken(const string& str, const string& SEP, size_t spos, size_t epos)
-{
-
-}
-
 XMLNode::XMLNode(const string& tag)
 {
 	_ParseTag(tag);
