@@ -4,18 +4,19 @@
 
 using namespace xmlfile;
 
-
 string GetToken(const string& str, const string& SEP, size_t spos, size_t epos)
 {
 
 }
 
-XMLNode::XMLNode(const string& tag)
+XMLNode::XMLNode(const string& tag, size_t depth)
+:_depth(depth)
 {
 	_ParseTag(tag);
 }
 
-XMLNode::XMLNode()
+XMLNode::XMLNode(size_t depth)
+:_depth(depth)
 {
 }
 
@@ -63,20 +64,27 @@ void XMLNode::ShowTree()
 		(*i)->ShowTree();
 }
 
-string XMLNode::AsString()
+string XMLNode::AsString(bool asDoc)
 {
-	string ret = LAB;
+	string ret;
+
+	if (asDoc)
+		for(size_t i = 0; i<_depth; ++i) ret += "\t";
+	ret += LAB;
 	ret += _tag;
+
 	for (STRMAP::iterator i=_attributes.begin(); i!= _attributes.end(); ++i)
 		ret += SEP + i->first + "=" + i->second;
-	ret += RAB + NL;
+	ret += RAB + (asDoc?NL:"");
 
 	for( list<XMLNode*>::iterator i = _childs.begin(); i != _childs.end(); ++i)
-		ret += (*i)->AsString();
-	ret += ELAB + _tag + RAB + NL;
+		ret += (*i)->AsString(asDoc);
+
+	if (asDoc)
+		for(size_t i = 0; i<_depth; ++i) ret += "\t";
+	ret += ELAB + _tag + RAB + (asDoc?NL:"");
 	return ret;
 }
-
 
 /* ＝＝＝XML Tree 類別=== */
 /* 直接從buf字串建立xml tree */
@@ -119,28 +127,42 @@ bool XMLTree::Read(const string& fn)
 	return true;
 }
 
+bool XMLTree::Save(const string& fn)
+{
+	ofstream ofs(fn.c_str());
+	if(!ofs){
+		cout<<"cannot open "<< fn <<NL;
+		return false;
+	}
+	ofs << _root.AsString(true);
+	return true;
+}
+
 /* 解析xml內文,搜尋sibling及child. */
 XMLNode* XMLTree::_DoParse(XMLNode* parent)
 {
 	string tag;
 	size_t nxpos = 0;
+	size_t ndepth = parent->GetDepth() + 1;
 	while(nxpos != string::npos) // search sibling
 	{
+		if (CheckSpecialTag()) continue;
+
 		if (string::npos != (nxpos = _EndOfNode())) // find ENDTAG
 		{
 			parent->SetContent(_buf.substr(_cpos, nxpos - _cpos));
 			return NULL;  //parent's ENDTAG
 		}
-		
+
 		if (string::npos != (nxpos = FindNextEmbrace(LAB, ERAB, tag, true))) // find SNGTAG
 		{
-			parent->AddChild(new XMLNode(tag));
+			parent->AddChild(new XMLNode(tag, ndepth));
 		}
 		else if (string::npos != (nxpos = FindNextEmbrace(LAB, RAB, tag, true))) // find BEGTAG
 		{
 			if (0 == tag.compare(0, LCMT.size(), LCMT)) continue; // it's a comment tag
-			
-			XMLNode* node = new XMLNode(tag);
+
+			XMLNode* node = new XMLNode(tag, ndepth);
 			parent->AddChild(node);
 			_DoParse(node);
 			nxpos = FindNextEmbrace(ELAB, RAB, tag, true); // skip ENDTAG
@@ -161,10 +183,3 @@ size_t XMLTree::_EndOfNode()
 	}
 	return _buf.size() - 1;
 }
-
-void XMLTree::ShowTree()
-{
-	//_root.ShowTree();
-	cout<<_root.AsString();
-}
-

@@ -35,9 +35,9 @@ public:
 
 	JSON(string& buf);
 	JSON(const string& fn);
-	
+
 	virtual ~JSON();
-	
+
 	bool Read(const string& fn);
 	bool Save();
 	void ShowTree();

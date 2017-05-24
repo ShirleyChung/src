@@ -30,15 +30,16 @@ protected:
 	list<XMLNode*> _childs;
 
 	string _tag, _content;
+	size_t _depth;
 
 	void _ParseTag(const string& tagcontent);
 
 public:
-	XMLNode();
-	XMLNode(const string& tag);
+	XMLNode(size_t depth = 0);
+	XMLNode(const string& tag, size_t depth = 0);
 	~XMLNode();
 
-	string AsString();
+	string AsString(bool asDoc = false);
 
 	void AddChild(XMLNode* node){ _childs.push_back(node); }
 	void delChild();
@@ -47,6 +48,8 @@ public:
 	void SetContent(const string& ct){ _content = ct; }
 	void SetTag(const string& tag){ _tag = tag; }
 	const string& GetTag(){ return _tag; }
+	size_t GetDepth(){ return _depth; }
+	void SetDepth(size_t d){ _depth = d; }
 };
 
 class XMLTree: private StringParser{
@@ -57,14 +60,19 @@ protected:
 	XMLNode* _DoParse(XMLNode* parent);
 	size_t _EndOfNode();
 
+	virtual bool CheckSpecialTag(){ return false; }
+
 public:
 	XMLTree(string& buf);
 	XMLTree(const string& fn);
 	~XMLTree();
 
 	bool Read(const string& fn);
-	bool Save();
-	void ShowTree();
+	bool Save(const string& fn);
+	
+	void ShowTree(){ _root.ShowTree(); }
+	string AsString(){ return _root.AsString(); }
+	string AsDocument(){ return _root.AsString(true); }	
 };
 
 };//namespace

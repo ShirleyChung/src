@@ -66,4 +66,3 @@ void MapLoader::LoadXML(STRARR& cmd)
 	xmlfile::XMLTree xtree(cmd[0]);
 	xtree.ShowTree();
 }
-

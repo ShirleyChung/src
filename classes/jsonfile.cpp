@@ -18,7 +18,7 @@ JSON::JSON(string& buf)
 JSON::JSON(const string& fn)
 {
 }
-	
+
 JSON::~JSON()
 {
 }
