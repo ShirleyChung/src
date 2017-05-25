@@ -1,0 +1,13 @@
+Import( 'env' )
+
+VariantDir( 'build', '.', duplicate = 0 )
+
+envannmind = env.Clone(CXXFLAGS=['-pthread'])
+
+libannmind = envannmind.SharedLibrary( target = 'build/libannmind', 
+	source = [Glob('build/*.cpp')], 
+	LIBPATH = '#out',
+	LIBS = ['SC','pthread'])
+
+envannmind.Install( '#out', libannmind )
+envannmind.Alias( 'install', '#out' )

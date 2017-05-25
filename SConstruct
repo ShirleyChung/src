@@ -10,6 +10,7 @@ system = SConscript( dirs='system', exports = ['env','sc'] )
 
 man = SConscript( dirs='man', exports = 'env' )
 talker = SConscript( dirs='talker', exports = 'env' )
+annmind = SConscript( dirs='annmind', exports = 'env' )
 
 #socket programs
 server = SConscript( dirs='server', exports = 'env' )
