@@ -4,6 +4,9 @@
 #include "funcdisp.hpp"
 #include "singleton.hpp"
 #include "mapdata.h"
+#include "xmlfile.h"
+
+using namespace xmlfile;
 
 class MapLoader: public FuncDisp<MapLoader>
 {
@@ -13,9 +16,7 @@ class MapLoader: public FuncDisp<MapLoader>
 	void SetWordDir(STRARR& cmd);
 	void LoadXML(STRARR& cmd);
 	
-	Area LoadArea(string area);
-	
-	map<string, Area> _world;
+	map<string, XMLTree> _world;
 
 public:
 	MapLoader();

@@ -1,7 +1,5 @@
 #include "maploader.h"
 #include "tool.h"
-#include "configfile.h"
-#include "xmlfile.h"
 
 extern "C" IModule* GetModule()
 {
@@ -32,22 +30,9 @@ void MapLoader::LoadMap(STRARR& cmd)
 	else
 	{
 		string mappath = _working_dir + "/" + cmd[0];
-		ConfigFile mapdata(mappath + MAPDATA);
-		for( STRMAP::const_iterator i = mapdata.GetConfig().begin(); i != mapdata.GetConfig().end(); ++i )
-			if (i->first != "name" && i->first != "desc")
-				_world[i->second] = LoadArea( mappath + "/" + i->second);
+		_world.insert( std::pair<string, XMLTree>(cmd[0], XMLTree(mappath)) );
 	}
 }
-
-Area MapLoader::LoadArea(string areapath)
-{
-	ConfigFile areadata(areapath + AREADATA);
-	Area area;
-	area.name = areadata.GetValue("name");
-	area.desc = areadata.GetValue("desc");
-	return area;
-}
-
 
 void MapLoader::SetWordDir(STRARR& cmd)
 {
@@ -63,6 +48,11 @@ void MapLoader::SetWordDir(STRARR& cmd)
 
 void MapLoader::LoadXML(STRARR& cmd)
 {
-	xmlfile::XMLTree xtree(cmd[0]);
-	xtree.ShowTree();
+	if (cmd.size())
+	{
+		XMLTree xtree(cmd[0]);
+		xtree.ShowTree();
+	}
+	else
+		cout << "please enter xml file name\n";
 }
