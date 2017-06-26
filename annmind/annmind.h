@@ -4,8 +4,13 @@
 #include "funcdisp.hpp"
 #include "singleton.hpp"
 
+#include <list>
+using namespace std;
+
 struct Neural{
-	double weight;
+    double multiply;
+    string key, val;
+    list<Neural*> connect;
 };
 
 class AnnMind:public FuncDisp<AnnMind>
@@ -13,7 +18,8 @@ class AnnMind:public FuncDisp<AnnMind>
 	void Trainning(STRARR&);
 	
 	string _desc;
-	
+	list<Neural> _neulist;
+
 public:
 	AnnMind();
 	virtual~ AnnMind();
