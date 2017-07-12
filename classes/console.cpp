@@ -3,6 +3,8 @@
 
 #define MAX_HISTORY 200
 
+/* 初始化主控台模組 */
+/* 載入設定檔console.cfg */
 Console::Console()
 :_conf("./conf/console.cfg")
 {
@@ -15,6 +17,7 @@ Console::~Console()
 {
 }
 
+/* 提示字+輸入, 若輸入為"exit"則結束行程 */
 void Console::Prompt()
 {
 	do 
@@ -33,6 +36,7 @@ void Console::Prompt()
 	cout<< "Bye!\n";
 }
 
+/* 檢查跳出條件 */
 bool Console::_IsExitCmd(string cmd)
 {
 	if (cmd == "exit")
@@ -41,6 +45,7 @@ bool Console::_IsExitCmd(string cmd)
 	return false;
 }
 
+/* 將指令佇列 */
 void Console::_QueueCmd()
 {
 	_cmdHistory.push_back(_cmd);

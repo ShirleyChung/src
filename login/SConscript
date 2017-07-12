@@ -2,7 +2,7 @@ Import( 'env' )
 
 VariantDir( 'build', '.', duplicate = 0 )
 
-envlogin = env.Clone(CXXFLAGS=['-pthread'], CPPPATH=['#classes', '#h'])
+envlogin = env.Clone()
 
 liblogin = envlogin.SharedLibrary( target = 'build/liblogin', 
 	source = [Glob('build/login.cpp')], 

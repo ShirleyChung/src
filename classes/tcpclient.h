@@ -20,6 +20,9 @@ struct SessionInfo
 	void Show();
 };
 
+/* Socket Client 模組 */
+/* 連接至指令位址: Connect */
+/* 傳送資料      : Send */
 class TCPClient
 {
 protected:	

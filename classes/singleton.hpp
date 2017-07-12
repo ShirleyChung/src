@@ -1,6 +1,7 @@
 #ifndef _singleton_pattern_for_unique_instance_one_process_2017_s_04
 #define _singleton_pattern_for_unique_instance_one_process_2017_s_04
 
+/* Singleton¼Ò¦¡template class */
 template<class T>
 class Singleton
 {

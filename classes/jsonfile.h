@@ -8,7 +8,6 @@
 
 using namespace std;
 
-
 namespace jsonfile{
 const string LPP = "{";
 const string RPP = "}";
@@ -27,6 +26,7 @@ public:
 	virtual ~Object();
 };
 
+/* 讀取JSON檔的模組, 以StringParser為基底 */
 class JSON: private StringParser
 {
 protected:

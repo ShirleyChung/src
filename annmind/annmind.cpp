@@ -6,6 +6,7 @@ extern "C" IModule* GetModule()
 	return AnnMindSingleton::GetInstance();
 }
 
+/* 模組初始化 */
 AnnMind::AnnMind()
 {
 	_name = "ANN";
@@ -18,6 +19,7 @@ AnnMind::~AnnMind()
 {
 }
 
+/* 輸入訓練資料 */
 void AnnMind::Trainning(STRARR& cmd)
 {
 	cout<<"trainning not implement yet.\n";

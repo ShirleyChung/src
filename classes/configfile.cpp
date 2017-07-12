@@ -9,17 +9,20 @@ using namespace std;
 ConfigFile::ConfigFile()
 {}
 
+/* 關閉時儲存檔案 */
 ConfigFile::~ConfigFile()
 {
 	Save();
 }
 
+/* 建構時載入檔案 */
 ConfigFile::ConfigFile(const string& fn)
 :_fn(fn)
 {
 	Load(fn);
 }
 
+/* 載入並解析檔案 */
 #define SEP '='
 bool ConfigFile::Load(const string& fn)
 {
@@ -50,6 +53,7 @@ bool ConfigFile::Load(const string& fn)
 	return true;
 }
 
+/* 指定檔名存檔 */
 void ConfigFile::Save(const string& fn)
 {
 	cout<<"Saving conf:"<<fn<<"..";
@@ -63,6 +67,7 @@ void ConfigFile::Save(const string& fn)
 	cout<<"OK\n";
 }
 
+/* 刪除某一個key-val值 */
 void ConfigFile::Del(const string& key)
 {
 	STRMAP::iterator itor = _cfg_map.find(key);

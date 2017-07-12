@@ -1,6 +1,7 @@
+import os
 env = Environment() 
 
-env.Append(CPPPATH=['#classes','#h'])
+env.Append(CPPPATH=['#classes','#h'], CPPDEFINES=[os.name])
 
 #common library
 sc = SConscript( dirs = 'classes', exports = 'env' )

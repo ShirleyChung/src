@@ -7,12 +7,14 @@
 #include <list>
 using namespace std;
 
+/* 定義神經元 */
 struct Neural{
     double multiply;
     string key, val;
     list<Neural*> connect;
 };
 
+/* 神經網路模組 */
 class AnnMind:public FuncDisp<AnnMind>
 {
 	void Trainning(STRARR&);

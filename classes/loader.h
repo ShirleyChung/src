@@ -1,8 +1,13 @@
 #ifndef _loader_for_modules_funcationlities_2017_03
 #define _loader_for_modules_funcationlities_2017_03
 
+#ifdef posix
+	#include <dlfcn.h>
+#else
+	#include <winbase.h>
+#endif
+
 #include <string>
-#include <dlfcn.h>
 #include <iostream>
 
 #include "../h/common_def.h"

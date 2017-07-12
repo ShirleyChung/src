@@ -3,6 +3,7 @@
 
 #include "../server/server.h"
 
+/* ²á¤Ñ«Ç¼Ò²Õ */
 class ChatRoom: public Server, public FuncDisp<ChatRoom>
 {
 	typedef FuncDisp<ChatRoom> this_type;

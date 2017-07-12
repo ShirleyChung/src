@@ -4,6 +4,8 @@
 #include <fstream>
 #include "../h/common_def.h"
 
+/* 組態檔類別 */
+/* 內容:key = val */
 class ConfigFile
 {
 	string _fn;

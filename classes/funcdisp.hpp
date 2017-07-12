@@ -4,6 +4,9 @@
 #include "../h/icmdmodule.h"
 #include "loader.h"
 
+/* ¤À¬£«ü¥Oµ¹¸ü¤Jªº¼Ò²Õ */
+/* ¿é¤J«ü¥Oµ¹¼Ò²Õ: EnterCommandToModule */
+/* ¨ú±o¼Ò²Õ«ü¥O  : GetCommands() */
 template<class T>
 class FuncDisp : public ICmdModule
 {
@@ -19,7 +22,7 @@ protected:
 		_func_map[key] = func;
 	}
 	
-	/* æœå°‹æ¨¡çµ„ä¸­å°æ‡‰çš„æŒ‡ä»¤ä¸¦åŸ·è¡Œ */
+	/* ·j´M¼Ò²Õ¤¤¹ïÀ³ªº«ü¥O¨Ã°õ¦æ */
 	virtual bool EnterCommandToModule(STRARR& cmd)
 	{
 		_supportCmds = SupportedCmdString(GetCommands());				
@@ -43,7 +46,7 @@ protected:
 		return false;
 	}
 	
-	/* å–å¾—æ­¤æ¨¡çµ„æ”¯æ´çš„æŒ‡ä»¤å­—ä¸²é™£åˆ— */
+	/* ¨ú±o¦¹¼Ò²Õ¤ä´©ªº«ü¥O¦r¦ê°}¦C */
 	vector<string> GetCommands()
 	{
 		vector<string> list;
@@ -52,7 +55,7 @@ protected:
 		return list;
 	}
 
-	/* å°å‡ºæ¨¡çµ„æ”¯æ´çš„æŒ‡ä»¤ */
+	/* ¦L¥X¼Ò²Õ¤ä´©ªº«ü¥O */
 	virtual string SupportedCmdString(STRARR& cmds)
 	{
 		string cmdlist;
@@ -67,7 +70,7 @@ public:
 
 	virtual string GetSupportedCmdString(){ return _supportCmds; }
 
-	/* å°‹æ‰¾å°æ‡‰çš„æŒ‡ä»¤, ä¸¦åŸ·è¡Œå‡½å¼ */
+	/* ´M§ä¹ïÀ³ªº«ü¥O, ¨Ã°õ¦æ¨ç¦¡ */
 	virtual bool EnterCommand(STRARR& cmd)
 	{
 		if (cmd.size())

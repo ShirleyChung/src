@@ -7,6 +7,9 @@
 
 #define ckey "prompt"
 
+/* 主控台模組 */
+/* 提示字:>輸入 */
+/* 透過AddCommandHandler繞行指令給各模組 */
 class Console
 {
 	CMDCBLIST _callbackList;

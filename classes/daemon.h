@@ -1,6 +1,8 @@
 #ifndef _daemon_common_20150901_shirley
 #define _daemon_common_20150901_shirley
 
+/* UNIX like系統的daemon模式 */
+
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
