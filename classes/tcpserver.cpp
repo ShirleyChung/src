@@ -1,7 +1,6 @@
 #include "tcpserver.h"
 #include <iostream>
 #include <memory.h>
-#include <arpa/inet.h>
 #include <fcntl.h>
 
 TCPServer::TCPServer()
@@ -38,7 +37,8 @@ bool TCPServer::Init(int port)
 	}
 	
 	int optval = 1;
-	setsockopt(cfg.sck, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
+
+	setsockopt(cfg.sck, SOL_SOCKET, SO_REUSEADDR, (char*)&optval, sizeof(optval));
 	
 	if (0 > bind(cfg.sck, (sockaddr*)&_sckaddr, sizeof(_sckaddr)))
 	{	

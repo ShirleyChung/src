@@ -29,6 +29,7 @@ void writeLog(const char* file, const char* formatStr)
 
 bool initDaemon()
 {
+#ifdef posix
         pid_t pid, sid;
 	char whoiam[] = "setupDaemon";
 
@@ -74,6 +75,7 @@ bool initDaemon()
 	close(STDIN_FILENO);
 	close(STDOUT_FILENO);
 	close(STDERR_FILENO);
-
+#else
+#endif
 	return true;
 }

@@ -1,6 +1,11 @@
+#ifdef posix
+	#include <sys/stat.h>
+#else
+	#include <windows.h>;
+	#include <FileAPI.h>
+#endif
 #include "tool.h"
 #include <algorithm>
-#include <sys/stat.h>
 #include <stdio.h>
 
 vector<string> Tokenize(const string& line, const string& sep)
@@ -52,11 +57,14 @@ bool CheckDirExist(const string& fn)
 	
 	int st = false;
 	size_t pos = fn.rfind('/');
+#ifdef posix
 	if ( pos != string::npos)
 		st = mkdir( fn.substr(0, pos).c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
 	else
 		st = mkdir( fn.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
-	
+#else
+	CreateDirectory(fn.c_str(), NULL);
+#endif
 	return st != 0; // st == 0 means dir does not exist before
 }
 

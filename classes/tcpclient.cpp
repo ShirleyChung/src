@@ -1,6 +1,5 @@
 #include "tcpclient.h"
 #include <iostream>
-#include <arpa/inet.h>
 #include <memory.h>
 
 TCPClient::TCPClient()
@@ -155,7 +154,7 @@ const list<addrinfo>& TCPClient::GetAddrInfo(string host, string port)
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
 	_addrinfo[host].clear();
-	if ( 0 != getaddrinfo( host.size()? host.c_str(): NULL, port.size()? port.c_str(): NULL, &hints, &res ) )
+	if ( 0 != ::getaddrinfo( host.size()? host.c_str(): NULL, port.size()? port.c_str(): NULL, &hints, &res ) )
 		cout<<"Address info of "<<host<<" doesn't get.\n";
 
 	for( addrinfo *p = res; p; p = p->ai_next )

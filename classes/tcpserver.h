@@ -1,9 +1,18 @@
 #ifndef _tcp_Server_cpp_class_2017_sly_initi_
 #define _tcp_Server_cpp_class_2017_sly_initi_
 
-#include <sys/socket.h>
-#include <sys/poll.h>
-#include <netinet/in.h>
+#ifdef posix
+	#include <sys/socket.h>
+	#include <sys/poll.h>
+	#include <netinet/in.h>
+	#include <arpa/inet.h>
+#else
+	#include <winsock2.h>
+	#include <ws2tcpip.h>
+	#define poll WSAPoll
+	#pragma comment(lib, "Ws2_32.lib")
+#endif
+
 #include <unistd.h>
 #include <memory.h>
 #include <string>

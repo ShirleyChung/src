@@ -1,14 +1,23 @@
 #ifndef _tcpclient_for_connect_to_server_2017_0330
 #define _tcpclient_for_connect_to_server_2017_0330
 
-#include <sys/socket.h>
+#ifdef posix
+	#include <sys/socket.h>
+	#include <sys/poll.h>
+	#include <netinet/in.h>
+	#include <netdb.h>
+	#include <arpa/inet.h>
+#else
+	#include <winsock2.h>
+	#include <ws2tcpip.h>
+	#define poll WSAPoll
+	#pragma comment(lib, "Ws2_32.lib")	
+#endif
+
 #include <unistd.h>
-#include <netinet/in.h>
 #include <string>
-#include <netdb.h>
 #include <map>
 #include <list>
-#include <sys/poll.h>
 
 using namespace std;
 

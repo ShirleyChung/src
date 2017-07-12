@@ -4,6 +4,7 @@
 #ifdef posix
 	#include <dlfcn.h>
 #else
+	#include <windows.h>
 	#include <winbase.h>
 #endif
 

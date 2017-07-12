@@ -18,16 +18,24 @@ IModule* Loader::Load(const string& fn)
 {
 	cout << "Loading " << fn << " ...";
 
+#ifdef posix
 	_handle = dlopen(fn.c_str(), RTLD_LAZY);
+#else
+	_handle = LoadLibrary(fn.c_str());	
+#endif
 	if (!_handle)
 	{
-		cout<<"load "<<fn<<" failed:"<<dlerror()<<"\n";
+		cout<<"load "<<fn<<" failed:\n";
 		return NULL;
 	}
 	
 	cout<<"OK\n";
 
+#ifdef posix
 	GetModuleProc gm = (GetModuleProc)dlsym(_handle, "GetModule");
+#else
+	GetModuleProc gm = (GetModuleProc)GetProcAddress((HMODULE)_handle, "GetModule");
+#endif
 	if (gm)
 		return (*gm)();
 	else{
