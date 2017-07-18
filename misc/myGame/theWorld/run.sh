@@ -1,2 +1,0 @@
-cd target
-java testMyWorld
