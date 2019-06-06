@@ -1,0 +1,7 @@
+#Travis CI script
+
+language: c++
+
+Compiler: gcc
+
+script: scons
