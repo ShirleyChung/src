@@ -40,7 +40,7 @@ bool TCPServer::Init(int port)
 
 	setsockopt(cfg.sck, SOL_SOCKET, SO_REUSEADDR, (char*)&optval, sizeof(optval));
 	
-	if (0 > bind(cfg.sck, (sockaddr*)&_sckaddr, sizeof(_sckaddr)))
+	if (0 > ::bind(cfg.sck, (sockaddr*)&_sckaddr, sizeof(_sckaddr)))
 	{	
 		cout<<"bind "<<cfg.port<<" error.\n";
 		return false;
