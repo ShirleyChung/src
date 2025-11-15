@@ -14,7 +14,7 @@ void writeLog(const char* file, const char* formatStr)
 	char buf[512] = {0};
 	char line[512] = {0};
 
-	sprintf(buf, "%s.log", file);
+	snprintf(buf, sizeof(buf), "%s.log", file);
 
 	FILE *fp = fopen(buf, "a+");
 	if (fp)
